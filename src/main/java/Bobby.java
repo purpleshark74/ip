@@ -18,10 +18,23 @@ public class Bobby {
 
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
+        String[] prompts = new String[100];
+        int count = 0;
 
         while (!input.trim().equalsIgnoreCase("bye")) {
             System.out.println(LINE);
-            System.out.println("     " + input);
+            if (input.equals("list")) {
+                if (prompts[0] == null) {
+                    System.out.println("No Additions Made Yet.");
+                }
+                for (int i = 0; i < count; i++) {
+                    System.out.println("     " + (i + 1) + ". " + prompts[i]);
+                }
+            } else {
+                prompts[count] = input;
+                count++;
+                System.out.println("     added: " + input);
+            }
             System.out.println(LINE);
             input = scanner.nextLine();
         }
