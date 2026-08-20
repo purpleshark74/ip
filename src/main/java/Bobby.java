@@ -18,21 +18,20 @@ public class Bobby {
 
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        String[] prompts = new String[100];
-        boolean[] completed = new boolean[100];
+        Task[] tasks = new Task[100];
         int count = 0;
 
         while (!input.trim().equalsIgnoreCase("bye")) {
             System.out.println(LINE);
             if (input.trim().equalsIgnoreCase("list")) {
-                if (prompts[0] == null) {
+                if (tasks[0] == null) {
                     System.out.println("No tasks added yet.");
                 } else {
                     System.out.println("Here are the tasks in your list:");
                 }
                 for (int i = 0; i < count; i++) {
-                    String status = completed[i] ? "[X]" : "[ ]";
-                    System.out.println("     " + (i + 1) + "." + status + " " + prompts[i]);
+                    System.out.println("     " + (i + 1) + ".[" + tasks[i].getStatusIcon() + "] "
+                            + tasks[i].getDescription());
                 }
             } else if (input.trim().toLowerCase().startsWith("mark ")) {
                 String taskNumber = input.trim().substring("mark ".length()).trim();
@@ -41,9 +40,9 @@ public class Bobby {
                     if (index < 0 || index >= count) {
                         System.out.println("     Invalid task number.");
                     } else {
-                        completed[index] = true;
+                        tasks[index].markAsDone();
                         System.out.println("     Nice! I've marked this task as done:");
-                        System.out.println("       [X] " + prompts[index]);
+                        System.out.println("       [X] " + tasks[index].getDescription());
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("     Invalid task number.");
@@ -55,15 +54,15 @@ public class Bobby {
                     if (index < 0 || index >= count) {
                         System.out.println("     Invalid task number.");
                     } else {
-                        completed[index] = false;
+                        tasks[index].markAsNotDone();
                         System.out.println("     OK, I've marked this task as not done yet:");
-                        System.out.println("       [ ] " + prompts[index]);
+                        System.out.println("       [ ] " + tasks[index].getDescription());
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("     Invalid task number.");
                 }
             } else {
-                prompts[count] = input;
+                tasks[count] = new Task(input);
                 count++;
                 System.out.println("     added: " + input);
             }
