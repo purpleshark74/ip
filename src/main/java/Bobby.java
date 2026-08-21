@@ -30,8 +30,7 @@ public class Bobby {
                     System.out.println("Here are the tasks in your list:");
                 }
                 for (int i = 0; i < count; i++) {
-                    System.out.println("     " + (i + 1) + ".[" + tasks[i].getStatusIcon() + "] "
-                            + tasks[i].getDescription());
+                    System.out.println("     " + (i + 1) + "." + tasks[i]);
                 }
             } else if (input.trim().toLowerCase().startsWith("mark ")) {
                 String taskNumber = input.trim().substring("mark ".length()).trim();
@@ -42,7 +41,7 @@ public class Bobby {
                     } else {
                         tasks[index].markAsDone();
                         System.out.println("     Nice! I've marked this task as done:");
-                        System.out.println("       [X] " + tasks[index].getDescription());
+                        System.out.println("       " + tasks[index]);
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("     Invalid task number.");
@@ -56,15 +55,40 @@ public class Bobby {
                     } else {
                         tasks[index].markAsNotDone();
                         System.out.println("     OK, I've marked this task as not done yet:");
-                        System.out.println("       [ ] " + tasks[index].getDescription());
+                        System.out.println("       " + tasks[index]);
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("     Invalid task number.");
                 }
-            } else {
-                tasks[count] = new Task(input);
+            } else if (input.trim().toLowerCase().startsWith("todo ")) {
+                tasks[count] = Task.createTodo(input.trim().substring("todo ".length()).trim());
                 count++;
-                System.out.println("     added: " + input);
+                printAddedTask(tasks, count);
+            } else if (input.trim().toLowerCase().startsWith("deadline ")) {
+                String[] parts = input.trim().substring("deadline ".length()).split(" /by ", 2);
+                if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+                    System.out.println("     Please use: deadline DESCRIPTION /by DEADLINE");
+                } else {
+                    tasks[count] = Task.createDeadline(parts[0].trim(), parts[1].trim());
+                    count++;
+                    printAddedTask(tasks, count);
+                }
+            } else if (input.trim().toLowerCase().startsWith("event ")) {
+                String eventDetails = input.trim().substring("event ".length());
+                String[] fromParts = eventDetails.split(" /from ", 2);
+                String[] toParts = fromParts.length == 2 ? fromParts[1].split(" /to ", 2) : new String[0];
+                if (fromParts.length < 2 || toParts.length < 2 || fromParts[0].trim().isEmpty()
+                        || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
+                    System.out.println("     Please use: event DESCRIPTION /from START /to END");
+                } else {
+                    tasks[count] = Task.createEvent(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
+                    count++;
+                    printAddedTask(tasks, count);
+                }
+            } else {
+                tasks[count] = Task.createTodo(input.trim());
+                count++;
+                printAddedTask(tasks, count);
             }
             System.out.println(LINE);
             input = scanner.nextLine();
@@ -73,5 +97,17 @@ public class Bobby {
         System.out.println(LINE);
         System.out.println("     Bye! Hope to see you again soon. ");
         System.out.println(LINE);
+    }
+
+    /**
+     * Prints confirmation after the most recently added task.
+     *
+     * @param tasks the task list
+     * @param count the number of tasks stored
+     */
+    private static void printAddedTask(Task[] tasks, int count) {
+        System.out.println("     Got it. I've added this task:");
+        System.out.println("       " + tasks[count - 1]);
+        System.out.println("     Now you have " + count + " tasks in the list.");
     }
 }
