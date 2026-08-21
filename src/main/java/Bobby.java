@@ -1,10 +1,10 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Runs Bobby's command-line task list application.
  */
 public class Bobby {
-    private static final int MAX_TASKS = 100;
     private static final String LINE = "____________________________________________________________";
 
     /**
@@ -27,13 +27,12 @@ public class Bobby {
 
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        Task[] tasks = new Task[MAX_TASKS];
-        int count = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (!input.trim().equalsIgnoreCase("bye")) {
             System.out.println(LINE);
             try {
-                count = processCommand(input, tasks, count);
+                processCommand(input, tasks);
             } catch (BobbyException e) {
                 System.out.println("     " + e.getMessage());
             }
@@ -47,40 +46,46 @@ public class Bobby {
     }
 
     /**
-     * Processes one non-exit command and returns the updated number of tasks.
+     * Processes one non-exit command.
      *
      * @param input the user's command
      * @param tasks the task list
-     * @param count the number of tasks stored before this command
-     * @return the number of tasks stored after this command
      * @throws BobbyException if the command is invalid
      */
-    private static int processCommand(String input, Task[] tasks, int count) throws BobbyException {
+    private static void processCommand(String input, ArrayList<Task> tasks) throws BobbyException {
         String command = input.trim();
         String lowerCaseCommand = command.toLowerCase();
         if (command.equalsIgnoreCase("list")) {
-            printTaskList(tasks, count);
-            return count;
+            printTaskList(tasks);
+            return;
         }
         if (isCommand(lowerCaseCommand, "mark")) {
-            return markTask(command, tasks, count, true);
+            markTask(command, tasks, true);
+            return;
         }
         if (isCommand(lowerCaseCommand, "unmark")) {
-            return markTask(command, tasks, count, false);
+            markTask(command, tasks, false);
+            return;
+        }
+        if (isCommand(lowerCaseCommand, "delete")) {
+            deleteTask(command, tasks);
+            return;
         }
         if (isCommand(lowerCaseCommand, "todo")) {
             String description = command.substring("todo".length()).trim();
             if (description.isEmpty()) {
                 throw new BobbyException("You don't have a task after the todo.");
             }
-            return addTask(new Todo(description), tasks, count);
+            addTask(new Todo(description), tasks);
+            return;
         }
         if (isCommand(lowerCaseCommand, "deadline")) {
             String[] parts = command.substring("deadline".length()).trim().split(" /by ", 2);
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
                 throw new BobbyException("Please use: deadline DESCRIPTION /by DEADLINE");
             }
-            return addTask(new Deadline(parts[0].trim(), parts[1].trim()), tasks, count);
+            addTask(new Deadline(parts[0].trim(), parts[1].trim()), tasks);
+            return;
         }
         if (isCommand(lowerCaseCommand, "event")) {
             String eventDetails = command.substring("event".length()).trim();
@@ -90,7 +95,8 @@ public class Bobby {
                     || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
                 throw new BobbyException("Please use: event DESCRIPTION /from START /to END");
             }
-            return addTask(new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim()), tasks, count);
+            addTask(new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim()), tasks);
+            return;
         }
         throw new BobbyException("I don't understand what you said. Please use the correct commands");
     }
@@ -100,49 +106,57 @@ public class Bobby {
         return input.equals(commandWord) || input.startsWith(commandWord + " ");
     }
 
-    /** Adds a task after ensuring that the fixed-size list still has space. */
-    private static int addTask(Task task, Task[] tasks, int count) throws BobbyException {
-        if (count >= MAX_TASKS) {
-            throw new BobbyException("Your task list is full.");
-        }
-        tasks[count] = task;
-        count++;
-        printAddedTask(tasks, count);
-        return count;
+    /** Adds a task to the dynamically sized task list and prints confirmation. */
+    private static void addTask(Task task, ArrayList<Task> tasks) {
+        tasks.add(task);
+        printAddedTask(tasks);
     }
 
     /** Marks or unmarks the task identified by the command's task number. */
-    private static int markTask(String command, Task[] tasks, int count, boolean isDone) throws BobbyException {
+    private static void markTask(String command, ArrayList<Task> tasks, boolean isDone) throws BobbyException {
         String commandWord = isDone ? "mark" : "unmark";
-        String taskNumber = command.substring(commandWord.length()).trim();
+        int index = getTaskIndex(command.substring(commandWord.length()).trim(), tasks.size());
+        if (isDone) {
+            tasks.get(index).markAsDone();
+            System.out.println("     Nice! I've marked this task as done:");
+        } else {
+            tasks.get(index).markAsNotDone();
+            System.out.println("     OK, I've marked this task as not done yet:");
+        }
+        System.out.println("       " + tasks.get(index));
+    }
+
+    /** Removes the task identified by the command's task number and prints confirmation. */
+    private static void deleteTask(String command, ArrayList<Task> tasks) throws BobbyException {
+        int index = getTaskIndex(command.substring("delete".length()).trim(), tasks.size());
+        Task removedTask = tasks.remove(index);
+        System.out.println("     Noted. I've removed this task:");
+        System.out.println("       " + removedTask);
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /** Converts a one-based task number to a valid zero-based task-list index. */
+    private static int getTaskIndex(String taskNumber, int taskCount) throws BobbyException {
         try {
             int index = Integer.parseInt(taskNumber) - 1;
-            if (index < 0 || index >= count) {
+            if (index < 0 || index >= taskCount) {
                 throw new BobbyException("Invalid task number.");
             }
-            if (isDone) {
-                tasks[index].markAsDone();
-                System.out.println("     Nice! I've marked this task as done:");
-            } else {
-                tasks[index].markAsNotDone();
-                System.out.println("     OK, I've marked this task as not done yet:");
-            }
-            System.out.println("       " + tasks[index]);
-            return count;
+            return index;
         } catch (NumberFormatException e) {
             throw new BobbyException("Invalid task number.");
         }
     }
 
     /** Prints all tasks, or a message when the list is empty. */
-    private static void printTaskList(Task[] tasks, int count) {
-        if (count == 0) {
+    private static void printTaskList(ArrayList<Task> tasks) {
+        if (tasks.isEmpty()) {
             System.out.println("No tasks added yet.");
             return;
         }
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < count; i++) {
-            System.out.println("     " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println("     " + (i + 1) + "." + tasks.get(i));
         }
     }
 
@@ -150,11 +164,10 @@ public class Bobby {
      * Prints confirmation after the most recently added task.
      *
      * @param tasks the task list
-     * @param count the number of tasks stored
      */
-    private static void printAddedTask(Task[] tasks, int count) {
+    private static void printAddedTask(ArrayList<Task> tasks) {
         System.out.println("     Got it. I've added this task:");
-        System.out.println("       " + tasks[count - 1]);
-        System.out.println("     Now you have " + count + " tasks in the list.");
+        System.out.println("       " + tasks.get(tasks.size() - 1));
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
     }
 }
