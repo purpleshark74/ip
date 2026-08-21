@@ -61,7 +61,7 @@ public class Bobby {
                     System.out.println("     Invalid task number.");
                 }
             } else if (input.trim().toLowerCase().startsWith("todo ")) {
-                tasks[count] = Task.createTodo(input.trim().substring("todo ".length()).trim());
+                tasks[count] = new Todo(input.trim().substring("todo ".length()).trim());
                 count++;
                 printAddedTask(tasks, count);
             } else if (input.trim().toLowerCase().startsWith("deadline ")) {
@@ -69,7 +69,7 @@ public class Bobby {
                 if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
                     System.out.println("     Please use: deadline DESCRIPTION /by DEADLINE");
                 } else {
-                    tasks[count] = Task.createDeadline(parts[0].trim(), parts[1].trim());
+                    tasks[count] = new Deadline(parts[0].trim(), parts[1].trim());
                     count++;
                     printAddedTask(tasks, count);
                 }
@@ -81,12 +81,12 @@ public class Bobby {
                         || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
                     System.out.println("     Please use: event DESCRIPTION /from START /to END");
                 } else {
-                    tasks[count] = Task.createEvent(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
+                    tasks[count] = new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
                     count++;
                     printAddedTask(tasks, count);
                 }
             } else {
-                tasks[count] = Task.createTodo(input.trim());
+                tasks[count] = new Todo(input.trim());
                 count++;
                 printAddedTask(tasks, count);
             }
