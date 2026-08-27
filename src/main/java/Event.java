@@ -1,18 +1,25 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 /**
- * A task that takes place between a start and end time.
+ * A task that takes place between a start and end date and time.
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a", Locale.ENGLISH);
+
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     /**
      * Creates an event task.
      *
      * @param description the event description
-     * @param from the start time text
-     * @param to the end time text
+     * @param from the start date and time
+     * @param to the end date and time
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
@@ -31,6 +38,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + description
-                + " (from: " + from + " to: " + to + ")";
+                + " (from: " + from.format(DISPLAY_DATE_FORMAT)
+                + " to: " + to.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }

@@ -1,4 +1,8 @@
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -7,6 +11,8 @@ import java.util.Scanner;
  */
 public class Bobby {
     private static final String LINE = "____________________________________________________________";
+    private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Starts the application and processes commands until the user enters {@code bye}.
@@ -84,9 +90,9 @@ public class Bobby {
         if (isCommand(lowerCaseCommand, "deadline")) {
             String[] parts = command.substring("deadline".length()).trim().split(" /by ", 2);
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: deadline DESCRIPTION /by DEADLINE");
+                throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
             }
-            addTask(new Deadline(parts[0].trim(), parts[1].trim()), tasks);
+            addTask(new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), tasks);
             return;
         }
         if (isCommand(lowerCaseCommand, "event")) {
@@ -95,9 +101,10 @@ public class Bobby {
             String[] toParts = fromParts.length == 2 ? fromParts[1].split(" /to ", 2) : new String[0];
             if (fromParts.length < 2 || toParts.length < 2 || fromParts[0].trim().isEmpty()
                     || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: event DESCRIPTION /from START /to END");
+                throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
             }
-            addTask(new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim()), tasks);
+            addTask(new Event(fromParts[0].trim(), parseDateTime(toParts[0].trim()),
+                    parseDateTime(toParts[1].trim())), tasks);
             return;
         }
         throw new BobbyException("I don't understand what you said. Please use the correct commands");
@@ -106,6 +113,15 @@ public class Bobby {
     /** Returns whether the input is exactly a command word or begins with that word followed by text. */
     private static boolean isCommand(String input, String commandWord) {
         return input.equals(commandWord) || input.startsWith(commandWord + " ");
+    }
+
+    /** Parses a date and time entered in {@code yyyy-MM-dd HHmm} format. */
+    private static LocalDateTime parseDateTime(String dateTime) throws BobbyException {
+        try {
+            return LocalDateTime.parse(dateTime, INPUT_DATE_TIME_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new BobbyException("Please use dates and times in YYYY-MM-DD HHMM format.");
+        }
     }
 
     /** Adds a task to the dynamically sized task list and prints confirmation. */

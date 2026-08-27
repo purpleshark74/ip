@@ -3,8 +3,8 @@
 ## Test environment
 
 - **Java version:** 25
-- **Build command:** `javac --release 25 -d out src/main/java/*.java`
-- **Launch convention:** Run from the repository root with `java -cp out Bobby`.
+- **Build command:** `javac --release 25 -d out/date-time-verification src/main/java/*.java`
+- **Launch convention:** Run from the repository root with `java -cp out/date-time-verification Bobby`.
 - **Comparison rule:** Exact output match after line-ending normalization, unless a test case explicitly states another deterministic rule.
 
 ## Test cases
@@ -35,7 +35,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -99,7 +99,7 @@ ____________________________________________________________
 
 ## T02 — deadline and event errors preserve state
 
-**Aim:** Malformed deadline and event commands do not alter the tasks added by valid commands.
+**Aim:** Malformed date input and incomplete deadline/event commands do not alter the tasks added by valid commands.
 
 **Inputs:**
 
@@ -107,7 +107,7 @@ ____________________________________________________________
 deadline submit /by Friday
 deadline
 list
-event meeting /from Monday /to Tuesday
+event meeting /from 2019-10-15 0900 /to 2019-10-15 1000
 event coffee /from
 list
 bye
@@ -116,7 +116,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "deadline submit /by Friday", "deadline", "list", "event meeting /from Monday /to Tuesday", "event coffee /from", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "deadline submit /by Friday", "deadline", "list", "event meeting /from 2019-10-15 0900 /to 2019-10-15 1000", "event coffee /from", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -133,29 +133,26 @@ ____________________________________________________________
      What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
+     Please use dates and times in YYYY-MM-DD HHMM format.
+____________________________________________________________
+____________________________________________________________
+     Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+No tasks added yet.
+____________________________________________________________
+____________________________________________________________
      Got it. I've added this task:
-       [D][ ] submit (by: Friday)
+       [E][ ] meeting (from: Oct 15 2019 9:00 AM to: Oct 15 2019 10:00 AM)
      Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
-     Please use: deadline DESCRIPTION /by DEADLINE
+     Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
-     1.[D][ ] submit (by: Friday)
-____________________________________________________________
-____________________________________________________________
-     Got it. I've added this task:
-       [E][ ] meeting (from: Monday to: Tuesday)
-     Now you have 2 tasks in the list.
-____________________________________________________________
-____________________________________________________________
-     Please use: event DESCRIPTION /from START /to END
-____________________________________________________________
-____________________________________________________________
-Here are the tasks in your list:
-     1.[D][ ] submit (by: Friday)
-     2.[E][ ] meeting (from: Monday to: Tuesday)
+     1.[E][ ] meeting (from: Oct 15 2019 9:00 AM to: Oct 15 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
@@ -172,8 +169,8 @@ ____________________________________________________________
   TODO Walk dog  
    
 list
-deadline pay bills /by Friday
-event project /from Monday /to Tuesday
+deadline pay bills /by 2019-10-15 1800
+event project /from 2019-10-16 0900 /to 2019-10-16 1000
 unmark 1
 mark 3
 list
@@ -183,7 +180,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by Friday", "event project /from Monday /to Tuesday", "unmark 1", "mark 3", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by 2019-10-15 1800", "event project /from 2019-10-16 0900 /to 2019-10-16 1000", "unmark 1", "mark 3", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -213,12 +210,12 @@ Here are the tasks in your list:
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] pay bills (by: Friday)
+       [D][ ] pay bills (by: Oct 15 2019 6:00 PM)
      Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project (from: Monday to: Tuesday)
+       [E][ ] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
      Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -227,13 +224,13 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
      Nice! I've marked this task as done:
-       [E][X] project (from: Monday to: Tuesday)
+       [E][X] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
      1.[T][ ] Walk dog
-     2.[D][ ] pay bills (by: Friday)
-     3.[E][X] project (from: Monday to: Tuesday)
+     2.[D][ ] pay bills (by: Oct 15 2019 6:00 PM)
+     3.[E][X] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
@@ -248,8 +245,8 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06 1800
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 mark 1
 mark 2
 delete 3
@@ -260,7 +257,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by June 6th", "event project meeting /from Aug 6th 2pm /to 4pm", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -283,12 +280,12 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Jun 06 2019 6:00 PM)
      Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
      Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -297,17 +294,17 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: June 6th)
+       [D][X] return book (by: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
      Noted. I've removed this task:
-       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
      Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][X] return book (by: June 6th)
+     2.[D][X] return book (by: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
@@ -340,7 +337,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -442,7 +439,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -510,8 +507,8 @@ ____________________________________________________________
 
 ```text
 todo read book
-deadline return book /by Friday
-event project meeting /from Monday /to Tuesday
+deadline return book /by 2019-06-06 1800
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 mark 2
 unmark 2
 delete 1
@@ -521,7 +518,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by Friday", "event project meeting /from Monday /to Tuesday", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out Bobby; Get-Content data/duke.txt
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out/date-time-verification Bobby; Get-Content data/duke.txt
 ```
 
 **Expected output:**
@@ -544,21 +541,21 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Friday)
+       [D][ ] return book (by: Jun 06 2019 6:00 PM)
      Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Monday to: Tuesday)
+       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
      Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
      Nice! I've marked this task as done:
-       [D][X] return book (by: Friday)
+       [D][X] return book (by: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
      OK, I've marked this task as not done yet:
-       [D][ ] return book (by: Friday)
+       [D][ ] return book (by: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
      Noted. I've removed this task:
@@ -568,8 +565,8 @@ ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
 ____________________________________________________________
-D | 0 | return book | Friday
-E | 0 | project meeting | Monday | Tuesday
+D | 0 | return book | 2019-06-06T18:00
+E | 0 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00
 ```
 
 ## T08 — saved tasks load when the application starts
@@ -586,7 +583,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | Friday", "E | 1 | project meeting | Monday | Tuesday" | Set-Content data/duke.txt; javac --release 25 -d out src/main/java/*.java; "list", "bye" | java -cp out Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | 2019-06-06T18:00", "E | 1 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification src/main/java/*.java; "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
@@ -605,8 +602,8 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: Friday)
-     3.[E][X] project meeting (from: Monday to: Tuesday)
+     2.[D][ ] return book (by: Jun 06 2019 6:00 PM)
+     3.[E][X] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
@@ -627,7 +624,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out src/main/java/*.java; "list", "bye" | java -cp out Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification src/main/java/*.java; "list", "bye" | java -cp out/date-time-verification Bobby
 ```
 
 **Expected output:**
