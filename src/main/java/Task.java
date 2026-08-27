@@ -48,6 +48,15 @@ public class Task {
     }
 
     /**
+     * Returns this task in the on-disk format used by {@link Storage}.
+     *
+     * @return a line that represents this task in the save file
+     */
+    public String toFileString() {
+        return "T | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
      * Returns this task in the standard list format.
      *
      * @return the formatted task

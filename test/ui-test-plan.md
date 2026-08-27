@@ -35,7 +35,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -116,7 +116,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "deadline submit /by Friday", "deadline", "list", "event meeting /from Monday /to Tuesday", "event coffee /from", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "deadline submit /by Friday", "deadline", "list", "event meeting /from Monday /to Tuesday", "event coffee /from", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -183,7 +183,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by Friday", "event project /from Monday /to Tuesday", "unmark 1", "mark 3", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by Friday", "event project /from Monday /to Tuesday", "unmark 1", "mark 3", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -260,7 +260,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by June 6th", "event project meeting /from Aug 6th 2pm /to 4pm", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by June 6th", "event project meeting /from Aug 6th 2pm /to 4pm", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -340,7 +340,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -442,7 +442,7 @@ bye
 **Command:**
 
 ```powershell
-javac --release 25 -d out src/main/java/*.java; "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out Bobby
 ```
 
 **Expected output:**
@@ -493,6 +493,158 @@ No tasks added yet.
 ____________________________________________________________
 ____________________________________________________________
      Invalid task number.
+____________________________________________________________
+____________________________________________________________
+No tasks added yet.
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+```
+
+## T07 — task-list changes are saved to disk
+
+**Aim:** Adding, marking, unmarking, and deleting tasks automatically replaces `data/duke.txt` with the current task list in the specified save format.
+
+**Inputs:**
+
+```text
+todo read book
+deadline return book /by Friday
+event project meeting /from Monday /to Tuesday
+mark 2
+unmark 2
+delete 1
+bye
+```
+
+**Command:**
+
+```powershell
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by Friday", "event project meeting /from Monday /to Tuesday", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out Bobby; Get-Content data/duke.txt
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Friday)
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: Monday to: Tuesday)
+     Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] return book (by: Friday)
+____________________________________________________________
+____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [D][ ] return book (by: Friday)
+____________________________________________________________
+____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] read book
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+D | 0 | return book | Friday
+E | 0 | project meeting | Monday | Tuesday
+```
+
+## T08 — saved tasks load when the application starts
+
+**Aim:** A valid save file restores to-do, deadline, and event tasks with their saved completion states before the first command is processed.
+
+**Inputs:**
+
+```text
+list
+bye
+```
+
+**Command:**
+
+```powershell
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | Friday", "E | 1 | project meeting | Monday | Tuesday" | Set-Content data/duke.txt; javac --release 25 -d out src/main/java/*.java; "list", "bye" | java -cp out Bobby
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: Friday)
+     3.[E][X] project meeting (from: Monday to: Tuesday)
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+```
+
+## T09 — invalid saved data starts with an empty list
+
+**Aim:** A malformed save record produces a clear error and does not load a partial or invalid task list.
+
+**Inputs:**
+
+```text
+list
+bye
+```
+
+**Command:**
+
+```powershell
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out src/main/java/*.java; "list", "bye" | java -cp out Bobby
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+     Unable to load tasks from disk. Starting with an empty list.
 ____________________________________________________________
 ____________________________________________________________
 No tasks added yet.
