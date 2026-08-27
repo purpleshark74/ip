@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -107,8 +108,9 @@ public class Bobby {
     }
 
     /** Adds a task to the dynamically sized task list and prints confirmation. */
-    private static void addTask(Task task, ArrayList<Task> tasks) {
+    private static void addTask(Task task, ArrayList<Task> tasks) throws BobbyException {
         tasks.add(task);
+        saveTasks(tasks);
         printAddedTask(tasks);
     }
 
@@ -123,6 +125,7 @@ public class Bobby {
             tasks.get(index).markAsNotDone();
             System.out.println("     OK, I've marked this task as not done yet:");
         }
+        saveTasks(tasks);
         System.out.println("       " + tasks.get(index));
     }
 
@@ -130,6 +133,7 @@ public class Bobby {
     private static void deleteTask(String command, ArrayList<Task> tasks) throws BobbyException {
         int index = getTaskIndex(command.substring("delete".length()).trim(), tasks.size());
         Task removedTask = tasks.remove(index);
+        saveTasks(tasks);
         System.out.println("     Noted. I've removed this task:");
         System.out.println("       " + removedTask);
         System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
@@ -145,6 +149,15 @@ public class Bobby {
             return index;
         } catch (NumberFormatException e) {
             throw new BobbyException("Invalid task number.");
+        }
+    }
+
+    /** Saves the changed task list and converts storage errors into a user-facing message. */
+    private static void saveTasks(ArrayList<Task> tasks) throws BobbyException {
+        try {
+            Storage.save(tasks);
+        } catch (IOException e) {
+            throw new BobbyException("Unable to save tasks to disk.");
         }
     }
 

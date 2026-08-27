@@ -501,3 +501,73 @@ ____________________________________________________________
      Bye! Hope to see you again soon.
 ____________________________________________________________
 ```
+
+## T07 — task-list changes are saved to disk
+
+**Aim:** Adding, marking, unmarking, and deleting tasks automatically replaces `data/duke.txt` with the current task list in the specified save format.
+
+**Inputs:**
+
+```text
+todo read book
+deadline return book /by Friday
+event project meeting /from Monday /to Tuesday
+mark 2
+unmark 2
+delete 1
+bye
+```
+
+**Command:**
+
+```powershell
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out src/main/java/*.java; "todo read book", "deadline return book /by Friday", "event project meeting /from Monday /to Tuesday", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out Bobby; Get-Content data/duke.txt
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Friday)
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: Monday to: Tuesday)
+     Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] return book (by: Friday)
+____________________________________________________________
+____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [D][ ] return book (by: Friday)
+____________________________________________________________
+____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] read book
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+D | 0 | return book | Friday
+E | 0 | project meeting | Monday | Tuesday
+```

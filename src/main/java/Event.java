@@ -18,6 +18,16 @@ public class Event extends Task {
         this.to = to;
     }
 
+    /**
+     * Returns this event in the on-disk format used by {@link Storage}.
+     *
+     * @return a line that represents this event in the save file
+     */
+    @Override
+    public String toFileString() {
+        return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from + " | " + to;
+    }
+
     @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + description
