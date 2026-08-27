@@ -1,16 +1,23 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 /**
- * A task that must be completed by a specified time.
+ * A task that must be completed by a specified date and time.
  */
 public class Deadline extends Task {
-    private final String by;
+    private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a", Locale.ENGLISH);
+
+    private final LocalDateTime by;
 
     /**
      * Creates a deadline task.
      *
      * @param description the task description
-     * @param by the deadline text
+     * @param by the deadline date and time
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
     }
@@ -27,6 +34,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return "[D][" + getStatusIcon() + "] " + description + " (by: " + by + ")";
+        return "[D][" + getStatusIcon() + "] " + description + " (by: "
+                + by.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }

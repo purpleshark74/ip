@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +69,13 @@ public class Storage {
             if (parts.length != 4 || parts[3].isEmpty()) {
                 throw new IOException("Invalid deadline data.");
             }
-            task = new Deadline(parts[2], parts[3]);
+            task = new Deadline(parts[2], parseDateTime(parts[3]));
             break;
         case "E":
             if (parts.length != 5 || parts[3].isEmpty() || parts[4].isEmpty()) {
                 throw new IOException("Invalid event data.");
             }
-            task = new Event(parts[2], parts[3], parts[4]);
+            task = new Event(parts[2], parseDateTime(parts[3]), parseDateTime(parts[4]));
             break;
         default:
             throw new IOException("Unknown task type.");
@@ -85,5 +87,14 @@ public class Storage {
             throw new IOException("Invalid task status.");
         }
         return task;
+    }
+
+    /** Parses an ISO-8601 date and time saved in the task file. */
+    private static LocalDateTime parseDateTime(String dateTime) throws IOException {
+        try {
+            return LocalDateTime.parse(dateTime);
+        } catch (DateTimeParseException e) {
+            throw new IOException("Invalid date data.", e);
+        }
     }
 }
