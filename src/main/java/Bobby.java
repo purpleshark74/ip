@@ -26,11 +26,13 @@ public class Bobby {
         System.out.println("     What can I do for you?");
         System.out.println(LINE);
 
+        ArrayList<Task> tasks = loadTasks();
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
-        ArrayList<Task> tasks = new ArrayList<>();
-
-        while (!input.trim().equalsIgnoreCase("bye")) {
+        while (scanner.hasNextLine()) {
+            String input = scanner.nextLine();
+            if (input.trim().equalsIgnoreCase("bye")) {
+                break;
+            }
             System.out.println(LINE);
             try {
                 processCommand(input, tasks);
@@ -38,7 +40,6 @@ public class Bobby {
                 System.out.println("     " + e.getMessage());
             }
             System.out.println(LINE);
-            input = scanner.nextLine();
         }
 
         System.out.println(LINE);
@@ -158,6 +159,18 @@ public class Bobby {
             Storage.save(tasks);
         } catch (IOException e) {
             throw new BobbyException("Unable to save tasks to disk.");
+        }
+    }
+
+    /** Loads saved tasks and starts with an empty list when the save file is unavailable or invalid. */
+    private static ArrayList<Task> loadTasks() {
+        try {
+            return new ArrayList<>(Storage.load());
+        } catch (IOException e) {
+            System.out.println(LINE);
+            System.out.println("     Unable to load tasks from disk. Starting with an empty list.");
+            System.out.println(LINE);
+            return new ArrayList<>();
         }
     }
 
