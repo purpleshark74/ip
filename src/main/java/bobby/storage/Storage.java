@@ -17,7 +17,7 @@ import bobby.task.Todo;
  * Reads and writes the task list at its fixed location on disk.
  */
 public class Storage {
-    private static final Path SAVE_FILE = Path.of("data", "duke.txt");
+    private static final Path SAVE_FILE = Path.of("data", "bobby.txt");
 
     /**
      * Writes the complete current task list, replacing the previous saved copy.

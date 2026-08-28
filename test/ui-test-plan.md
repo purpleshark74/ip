@@ -35,7 +35,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -116,7 +116,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "deadline submit /by Friday", "deadline", "list", "event meeting /from 2019-10-15 0900 /to 2019-10-15 1000", "event coffee /from", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "deadline submit /by Friday", "deadline", "list", "event meeting /from 2019-10-15 0900 /to 2019-10-15 1000", "event coffee /from", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -180,7 +180,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by 2019-10-15 1800", "event project /from 2019-10-16 0900 /to 2019-10-16 1000", "unmark 1", "mark 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by 2019-10-15 1800", "event project /from 2019-10-16 0900 /to 2019-10-16 1000", "unmark 1", "mark 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -257,7 +257,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -337,7 +337,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -439,7 +439,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -504,7 +504,7 @@ ____________________________________________________________
 
 ## T07 — task-list changes are saved to disk
 
-**Aim:** Adding, marking, unmarking, and deleting tasks automatically replaces `data/duke.txt` with the current task list in the specified save format.
+**Aim:** Adding, marking, unmarking, and deleting tasks automatically replaces `data/bobby.txt` with the current task list in the specified save format.
 
 **Inputs:**
 
@@ -521,7 +521,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out/date-time-verification bobby.Bobby; Get-Content data/duke.txt
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out/date-time-verification bobby.Bobby; Get-Content data/bobby.txt
 ```
 
 **Expected output:**
@@ -586,7 +586,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | 2019-06-06T18:00", "E | 1 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | 2019-06-06T18:00", "E | 1 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00" | Set-Content data/bobby.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -627,7 +627,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/bobby.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
