@@ -3,7 +3,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
 
 /**
  * Runs Bobby's command-line task list application.
@@ -20,7 +19,7 @@ public class Bobby {
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();
-        ArrayList<Task> tasks = loadTasks(ui);
+        TaskList tasks = loadTasks(ui);
         while (ui.hasNextCommand()) {
             String input = ui.readCommand();
             if (input.trim().equalsIgnoreCase("bye")) {
@@ -45,11 +44,11 @@ public class Bobby {
      * @param ui the console user interface
      * @throws BobbyException if the command is invalid
      */
-    private static void processCommand(String input, ArrayList<Task> tasks, Ui ui) throws BobbyException {
+    private static void processCommand(String input, TaskList tasks, Ui ui) throws BobbyException {
         String command = input.trim();
         String lowerCaseCommand = command.toLowerCase();
         if (command.equalsIgnoreCase("list")) {
-            ui.showTaskList(tasks);
+            ui.showTaskList(tasks.asList());
             return;
         }
         if (isCommand(lowerCaseCommand, "mark")) {
@@ -110,28 +109,28 @@ public class Bobby {
     }
 
     /** Adds a task to the dynamically sized task list and prints confirmation. */
-    private static void addTask(Task task, ArrayList<Task> tasks, Ui ui) throws BobbyException {
+    private static void addTask(Task task, TaskList tasks, Ui ui) throws BobbyException {
         tasks.add(task);
         saveTasks(tasks);
         ui.showTaskAdded(task, tasks.size());
     }
 
     /** Marks or unmarks the task identified by the command's task number. */
-    private static void markTask(String command, ArrayList<Task> tasks, boolean isDone, Ui ui)
+    private static void markTask(String command, TaskList tasks, boolean isDone, Ui ui)
             throws BobbyException {
         String commandWord = isDone ? "mark" : "unmark";
         int index = getTaskIndex(command.substring(commandWord.length()).trim(), tasks.size());
         if (isDone) {
-            tasks.get(index).markAsDone();
+            tasks.markAsDone(index);
         } else {
-            tasks.get(index).markAsNotDone();
+            tasks.markAsNotDone(index);
         }
         saveTasks(tasks);
         ui.showTaskMarked(tasks.get(index), isDone);
     }
 
     /** Removes the task identified by the command's task number and prints confirmation. */
-    private static void deleteTask(String command, ArrayList<Task> tasks, Ui ui) throws BobbyException {
+    private static void deleteTask(String command, TaskList tasks, Ui ui) throws BobbyException {
         int index = getTaskIndex(command.substring("delete".length()).trim(), tasks.size());
         Task removedTask = tasks.remove(index);
         saveTasks(tasks);
@@ -152,21 +151,21 @@ public class Bobby {
     }
 
     /** Saves the changed task list and converts storage errors into a user-facing message. */
-    private static void saveTasks(ArrayList<Task> tasks) throws BobbyException {
+    private static void saveTasks(TaskList tasks) throws BobbyException {
         try {
-            Storage.save(tasks);
+            Storage.save(tasks.asList());
         } catch (IOException e) {
             throw new BobbyException("Unable to save tasks to disk.");
         }
     }
 
     /** Loads saved tasks and starts with an empty list when the save file is unavailable or invalid. */
-    private static ArrayList<Task> loadTasks(Ui ui) {
+    private static TaskList loadTasks(Ui ui) {
         try {
-            return new ArrayList<>(Storage.load());
+            return new TaskList(Storage.load());
         } catch (IOException e) {
             ui.showLoadingError();
-            return new ArrayList<>();
+            return new TaskList();
         }
     }
 
