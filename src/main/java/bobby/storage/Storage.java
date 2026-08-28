@@ -1,3 +1,5 @@
+package bobby.storage;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -5,6 +7,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import bobby.task.Deadline;
+import bobby.task.Event;
+import bobby.task.Task;
+import bobby.task.Todo;
 
 /**
  * Reads and writes the task list at its fixed location on disk.

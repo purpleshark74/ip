@@ -3,8 +3,8 @@
 ## Test environment
 
 - **Java version:** 25
-- **Build command:** `javac --release 25 -d out/date-time-verification src/main/java/*.java`
-- **Launch convention:** Run from the repository root with `java -cp out/date-time-verification Bobby`.
+- **Build command:** `javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName)`
+- **Launch convention:** Run from the repository root with `java -cp out/date-time-verification bobby.Bobby`.
 - **Comparison rule:** Exact output match after line-ending normalization, unless a test case explicitly states another deterministic rule.
 
 ## Test cases
@@ -35,7 +35,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "todo", "list", "blah", "list", "mark 1", "mark 0", "list", "unmark 1", "unmark 2", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -116,7 +116,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "deadline submit /by Friday", "deadline", "list", "event meeting /from 2019-10-15 0900 /to 2019-10-15 1000", "event coffee /from", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "deadline submit /by Friday", "deadline", "list", "event meeting /from 2019-10-15 0900 /to 2019-10-15 1000", "event coffee /from", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -180,7 +180,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by 2019-10-15 1800", "event project /from 2019-10-16 0900 /to 2019-10-16 1000", "unmark 1", "mark 3", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "  TODO Walk dog  ", "   ", "list", "deadline pay bills /by 2019-10-15 1800", "event project /from 2019-10-16 0900 /to 2019-10-16 1000", "unmark 1", "mark 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -257,7 +257,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 1", "mark 2", "delete 3", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -337,7 +337,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo alpha", "todo beta", "todo gamma", "delete 2", "list", "delete 3", "list", "delete two", "list", "delete 2", "list", "delete 0", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -439,7 +439,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out/date-time-verification Bobby
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "delete 1", "list", "todo only task", "delete", "list", "delete 2", "list", "DELETE 1", "list", "delete 1", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -459,6 +459,7 @@ ____________________________________________________________
      Invalid task number.
 ____________________________________________________________
 ____________________________________________________________
+Here are the tasks in your list:
 No tasks added yet.
 ____________________________________________________________
 ____________________________________________________________
@@ -486,12 +487,14 @@ ____________________________________________________________
      Now you have 0 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
+Here are the tasks in your list:
 No tasks added yet.
 ____________________________________________________________
 ____________________________________________________________
      Invalid task number.
 ____________________________________________________________
 ____________________________________________________________
+Here are the tasks in your list:
 No tasks added yet.
 ____________________________________________________________
 ____________________________________________________________
@@ -518,7 +521,7 @@ bye
 **Command:**
 
 ```powershell
-Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification src/main/java/*.java; "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out/date-time-verification Bobby; Get-Content data/duke.txt
+Remove-Item data/duke.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600", "mark 2", "unmark 2", "delete 1", "bye" | java -cp out/date-time-verification bobby.Bobby; Get-Content data/duke.txt
 ```
 
 **Expected output:**
@@ -583,7 +586,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | 2019-06-06T18:00", "E | 1 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification src/main/java/*.java; "list", "bye" | java -cp out/date-time-verification Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "T | 1 | read book", "D | 0 | return book | 2019-06-06T18:00", "E | 1 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -624,7 +627,7 @@ bye
 **Command:**
 
 ```powershell
-$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification src/main/java/*.java; "list", "bye" | java -cp out/date-time-verification Bobby
+$ProgressPreference = 'SilentlyContinue'; New-Item -ItemType Directory -Force data | Out-Null; "D | 1 | missing deadline" | Set-Content data/duke.txt; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "list", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
 **Expected output:**
@@ -644,6 +647,7 @@ ____________________________________________________________
      Unable to load tasks from disk. Starting with an empty list.
 ____________________________________________________________
 ____________________________________________________________
+Here are the tasks in your list:
 No tasks added yet.
 ____________________________________________________________
 ____________________________________________________________

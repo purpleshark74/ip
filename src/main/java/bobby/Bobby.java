@@ -1,4 +1,13 @@
+package bobby;
+
 import java.io.IOException;
+
+import bobby.command.Parser;
+import bobby.exception.BobbyException;
+import bobby.storage.Storage;
+import bobby.task.Task;
+import bobby.task.TaskList;
+import bobby.ui.Ui;
 
 /**
  * Runs Bobby's command-line task list application.
