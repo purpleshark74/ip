@@ -36,6 +36,11 @@ public class Deadline extends Task {
         return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + by;
     }
 
+    /**
+     * Returns this deadline task in the standard list format.
+     *
+     * @return the formatted deadline task
+     */
     @Override
     public String toString() {
         return "[D][" + getStatusIcon() + "] " + description + " (by: "

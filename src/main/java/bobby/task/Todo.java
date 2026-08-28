@@ -13,6 +13,11 @@ public class Todo extends Task {
         super(description);
     }
 
+    /**
+     * Returns this to-do task in the standard list format.
+     *
+     * @return the formatted to-do task
+     */
     @Override
     public String toString() {
         return "[T][" + getStatusIcon() + "] " + description;
