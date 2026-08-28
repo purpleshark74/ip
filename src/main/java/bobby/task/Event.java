@@ -39,6 +39,11 @@ public class Event extends Task {
         return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from + " | " + to;
     }
 
+    /**
+     * Returns this event task in the standard list format.
+     *
+     * @return the formatted event task
+     */
     @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + description
