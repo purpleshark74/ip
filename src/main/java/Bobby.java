@@ -1,16 +1,9 @@
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 
 /**
  * Runs Bobby's command-line task list application.
  */
 public class Bobby {
-    private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
-            DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
-
     /**
      * Starts the application and processes commands until the user enters {@code bye}.
      *
@@ -22,7 +15,7 @@ public class Bobby {
         TaskList tasks = loadTasks(ui);
         while (ui.hasNextCommand()) {
             String input = ui.readCommand();
-            if (input.trim().equalsIgnoreCase("bye")) {
+            if (Parser.isByeCommand(input)) {
                 break;
             }
             ui.showLine();
@@ -45,66 +38,17 @@ public class Bobby {
      * @throws BobbyException if the command is invalid
      */
     private static void processCommand(String input, TaskList tasks, Ui ui) throws BobbyException {
-        String command = input.trim();
-        String lowerCaseCommand = command.toLowerCase();
-        if (command.equalsIgnoreCase("list")) {
+        Parser.Command command = Parser.parse(input, tasks.size());
+        if (command.getType() == Parser.CommandType.LIST) {
             ui.showTaskList(tasks.asList());
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "mark")) {
-            markTask(command, tasks, true, ui);
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "unmark")) {
-            markTask(command, tasks, false, ui);
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "delete")) {
-            deleteTask(command, tasks, ui);
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "todo")) {
-            String description = command.substring("todo".length()).trim();
-            if (description.isEmpty()) {
-                throw new BobbyException("You don't have a task after the todo.");
-            }
-            addTask(new Todo(description), tasks, ui);
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "deadline")) {
-            String[] parts = command.substring("deadline".length()).trim().split(" /by ", 2);
-            if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
-            }
-            addTask(new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), tasks, ui);
-            return;
-        }
-        if (isCommand(lowerCaseCommand, "event")) {
-            String eventDetails = command.substring("event".length()).trim();
-            String[] fromParts = eventDetails.split(" /from ", 2);
-            String[] toParts = fromParts.length == 2 ? fromParts[1].split(" /to ", 2) : new String[0];
-            if (fromParts.length < 2 || toParts.length < 2 || fromParts[0].trim().isEmpty()
-                    || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
-            }
-            addTask(new Event(fromParts[0].trim(), parseDateTime(toParts[0].trim()),
-                    parseDateTime(toParts[1].trim())), tasks, ui);
-            return;
-        }
-        throw new BobbyException("I don't understand what you said. Please use the correct commands");
-    }
-
-    /** Returns whether the input is exactly a command word or begins with that word followed by text. */
-    private static boolean isCommand(String input, String commandWord) {
-        return input.equals(commandWord) || input.startsWith(commandWord + " ");
-    }
-
-    /** Parses a date and time entered in {@code yyyy-MM-dd HHmm} format. */
-    private static LocalDateTime parseDateTime(String dateTime) throws BobbyException {
-        try {
-            return LocalDateTime.parse(dateTime, INPUT_DATE_TIME_FORMAT);
-        } catch (DateTimeParseException e) {
-            throw new BobbyException("Please use dates and times in YYYY-MM-DD HHMM format.");
+        } else if (command.getType() == Parser.CommandType.ADD) {
+            addTask(command.getTask(), tasks, ui);
+        } else if (command.getType() == Parser.CommandType.MARK) {
+            markTask(command.getTaskIndex(), tasks, true, ui);
+        } else if (command.getType() == Parser.CommandType.UNMARK) {
+            markTask(command.getTaskIndex(), tasks, false, ui);
+        } else if (command.getType() == Parser.CommandType.DELETE) {
+            deleteTask(command.getTaskIndex(), tasks, ui);
         }
     }
 
@@ -115,11 +59,9 @@ public class Bobby {
         ui.showTaskAdded(task, tasks.size());
     }
 
-    /** Marks or unmarks the task identified by the command's task number. */
-    private static void markTask(String command, TaskList tasks, boolean isDone, Ui ui)
+    /** Marks or unmarks the task selected by the parser. */
+    private static void markTask(int index, TaskList tasks, boolean isDone, Ui ui)
             throws BobbyException {
-        String commandWord = isDone ? "mark" : "unmark";
-        int index = getTaskIndex(command.substring(commandWord.length()).trim(), tasks.size());
         if (isDone) {
             tasks.markAsDone(index);
         } else {
@@ -129,25 +71,11 @@ public class Bobby {
         ui.showTaskMarked(tasks.get(index), isDone);
     }
 
-    /** Removes the task identified by the command's task number and prints confirmation. */
-    private static void deleteTask(String command, TaskList tasks, Ui ui) throws BobbyException {
-        int index = getTaskIndex(command.substring("delete".length()).trim(), tasks.size());
+    /** Removes the task selected by the parser and prints confirmation. */
+    private static void deleteTask(int index, TaskList tasks, Ui ui) throws BobbyException {
         Task removedTask = tasks.remove(index);
         saveTasks(tasks);
         ui.showTaskDeleted(removedTask, tasks.size());
-    }
-
-    /** Converts a one-based task number to a valid zero-based task-list index. */
-    private static int getTaskIndex(String taskNumber, int taskCount) throws BobbyException {
-        try {
-            int index = Integer.parseInt(taskNumber) - 1;
-            if (index < 0 || index >= taskCount) {
-                throw new BobbyException("Invalid task number.");
-            }
-            return index;
-        } catch (NumberFormatException e) {
-            throw new BobbyException("Invalid task number.");
-        }
     }
 
     /** Saves the changed task list and converts storage errors into a user-facing message. */
