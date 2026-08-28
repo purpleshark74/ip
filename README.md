@@ -2,6 +2,27 @@
 
 This is a project template for a greenfield Java project named Bobby. Given below are instructions on how to use it.
 
+## Creating and running the executable JAR
+
+The project uses Gradle's Shadow plugin to build a **fat JAR**: one file containing Bobby and all of its runtime dependencies. The application entry point is configured as `bobby.Bobby`, so the JAR can be started directly with `java -jar`.
+
+1. From the project root, run:
+
+   ```powershell
+   .\gradlew.bat shadowJar
+   ```
+
+   On macOS or Linux, run `./gradlew shadowJar` instead. Use Java 25 to run the build.
+
+1. Find the generated file at `build/libs/bobby.jar`.
+1. Copy `bobby.jar` into an empty folder, open a command window in that folder, and run:
+
+   ```powershell
+   java -jar "bobby.jar"
+   ```
+
+   The application stores its task data in `data/bobby.txt` relative to the folder containing the JAR. This keeps the JAR portable: copying only the JAR to a new empty folder starts a separate task list there.
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.
