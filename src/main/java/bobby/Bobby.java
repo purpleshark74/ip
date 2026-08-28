@@ -61,14 +61,18 @@ public class Bobby {
         }
     }
 
-    /** Adds a task to the dynamically sized task list and prints confirmation. */
+    /**
+     * Adds a task to the dynamically sized task list and prints confirmation.
+     */
     private static void addTask(Task task, TaskList tasks, Ui ui) throws BobbyException {
         tasks.add(task);
         saveTasks(tasks);
         ui.showTaskAdded(task, tasks.size());
     }
 
-    /** Marks or unmarks the task selected by the parser. */
+    /**
+     * Marks or unmarks the task selected by the parser.
+     */
     private static void markTask(int index, TaskList tasks, boolean isDone, Ui ui)
             throws BobbyException {
         if (isDone) {
@@ -80,14 +84,18 @@ public class Bobby {
         ui.showTaskMarked(tasks.get(index), isDone);
     }
 
-    /** Removes the task selected by the parser and prints confirmation. */
+    /**
+     * Removes the task selected by the parser and prints confirmation.
+     */
     private static void deleteTask(int index, TaskList tasks, Ui ui) throws BobbyException {
         Task removedTask = tasks.remove(index);
         saveTasks(tasks);
         ui.showTaskDeleted(removedTask, tasks.size());
     }
 
-    /** Saves the changed task list and converts storage errors into a user-facing message. */
+    /**
+     * Saves the changed task list and converts storage errors into a user-facing message.
+     */
     private static void saveTasks(TaskList tasks) throws BobbyException {
         try {
             Storage.save(tasks.asList());
@@ -96,7 +104,9 @@ public class Bobby {
         }
     }
 
-    /** Loads saved tasks and starts with an empty list when the save file is unavailable or invalid. */
+    /**
+     * Loads saved tasks and starts with an empty list when the save file is unavailable or invalid.
+     */
     private static TaskList loadTasks(Ui ui) {
         try {
             return new TaskList(Storage.load());
