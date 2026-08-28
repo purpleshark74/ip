@@ -50,6 +50,8 @@ public class Bobby {
         Parser.Command command = Parser.parse(input, tasks.size());
         if (command.getType() == Parser.CommandType.LIST) {
             ui.showTaskList(tasks.asList());
+        } else if (command.getType() == Parser.CommandType.FIND) {
+            ui.showMatchingTasks(tasks.findTasksContaining(command.getKeyword()));
         } else if (command.getType() == Parser.CommandType.ADD) {
             addTask(command.getTask(), tasks, ui);
         } else if (command.getType() == Parser.CommandType.MARK) {

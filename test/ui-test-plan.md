@@ -654,3 +654,71 @@ ____________________________________________________________
      Bye! Hope to see you again soon.
 ____________________________________________________________
 ```
+
+## T10 — find tasks by description keyword
+
+**Aim:** A keyword search displays all matching task descriptions in their original order, including different task types and completion states.
+
+**Inputs:**
+
+```text
+todo read book
+deadline return book /by 2019-06-06 1800
+todo buy groceries
+mark 1
+mark 2
+find book
+bye
+```
+
+**Command:**
+
+```powershell
+Remove-Item data/bobby.txt -ErrorAction Ignore; javac --release 25 -d out/date-time-verification (Get-ChildItem -Recurse -Filter *.java -Path src/main/java | ForEach-Object FullName); "todo read book", "deadline return book /by 2019-06-06 1800", "todo buy groceries", "mark 1", "mark 2", "find book", "bye" | java -cp out/date-time-verification bobby.Bobby
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Jun 06 2019 6:00 PM)
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy groceries
+     Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+____________________________________________________________
+____________________________________________________________
+     Nice! I've marked this task as done:
+       [D][X] return book (by: Jun 06 2019 6:00 PM)
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+     1.[T][X] read book
+     2.[D][X] return book (by: Jun 06 2019 6:00 PM)
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+```

@@ -45,6 +45,19 @@ class ParserTest {
     }
 
     /**
+     * Verifies that a find command returns its trimmed keyword without task data.
+     */
+    @Test
+    void parse_findCommand_findCommandWithKeywordReturned() throws BobbyException {
+        Parser.Command command = Parser.parse(" FIND   book  ", 3);
+
+        assertEquals(Parser.CommandType.FIND, command.getType());
+        assertEquals("book", command.getKeyword());
+        assertNull(command.getTask());
+        assertEquals(-1, command.getTaskIndex());
+    }
+
+    /**
      * Verifies that a to-do command produces a to-do task with a trimmed description.
      */
     @Test
@@ -119,6 +132,16 @@ class ParserTest {
         BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse("todo", 0));
 
         assertEquals("You don't have a task after the todo.", exception.getMessage());
+    }
+
+    /**
+     * Verifies that a find command requires a keyword.
+     */
+    @Test
+    void parse_findWithoutKeyword_exceptionThrown() {
+        BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse("find", 0));
+
+        assertEquals("Please provide a keyword to search for.", exception.getMessage());
     }
 
     /**

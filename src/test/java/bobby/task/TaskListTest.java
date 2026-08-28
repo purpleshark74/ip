@@ -60,4 +60,20 @@ class TaskListTest {
         assertEquals(1, snapshot.size());
         assertThrows(UnsupportedOperationException.class, () -> snapshot.add(new Todo("third task")));
     }
+
+    /**
+     * Verifies that searching descriptions ignores letter case and preserves task order.
+     */
+    @Test
+    void findTasksContaining_matchingDescriptions_matchingTasksInOrderReturned() {
+        Task firstTask = new Todo("Read book");
+        Task secondTask = new Todo("return book");
+        Task thirdTask = new Todo("buy groceries");
+        TaskList taskList = new TaskList(List.of(firstTask, secondTask, thirdTask));
+
+        List<Task> matchingTasks = taskList.findTasksContaining("BOOK");
+
+        assertEquals(List.of(firstTask, secondTask), matchingTasks);
+        assertThrows(UnsupportedOperationException.class, () -> matchingTasks.add(thirdTask));
+    }
 }

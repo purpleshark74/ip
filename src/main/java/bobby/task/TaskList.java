@@ -2,6 +2,7 @@ package bobby.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Stores and manages the tasks currently used by Bobby.
@@ -97,5 +98,22 @@ public class TaskList {
      */
     public List<Task> asList() {
         return List.copyOf(tasks);
+    }
+
+    /**
+     * Returns tasks whose descriptions contain the given keyword, ignoring letter case.
+     *
+     * @param keyword the keyword to search for
+     * @return the matching tasks in their original order
+     */
+    public List<Task> findTasksContaining(String keyword) {
+        String lowerCaseKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(lowerCaseKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return List.copyOf(matchingTasks);
     }
 }

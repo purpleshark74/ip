@@ -21,6 +21,7 @@ public class Parser {
     /** Identifies the operation represented by a parsed command. */
     public enum CommandType {
         LIST,
+        FIND,
         ADD,
         MARK,
         UNMARK,
@@ -34,6 +35,7 @@ public class Parser {
         private final CommandType type;
         private final Task task;
         private final int taskIndex;
+        private final String keyword;
 
         /**
          * Creates a command with its optional task or zero-based task index.
@@ -41,11 +43,13 @@ public class Parser {
          * @param type the operation to perform
          * @param task the task to add, or {@code null} for other operations
          * @param taskIndex the task index, or {@code -1} when not applicable
+         * @param keyword the search keyword, or {@code null} when not applicable
          */
-        private Command(CommandType type, Task task, int taskIndex) {
+        private Command(CommandType type, Task task, int taskIndex, String keyword) {
             this.type = type;
             this.task = task;
             this.taskIndex = taskIndex;
+            this.keyword = keyword;
         }
 
         /**
@@ -74,6 +78,15 @@ public class Parser {
         public int getTaskIndex() {
             return taskIndex;
         }
+
+        /**
+         * Returns the keyword used to find tasks.
+         *
+         * @return the search keyword for a {@link CommandType#FIND} command, otherwise {@code null}
+         */
+        public String getKeyword() {
+            return keyword;
+        }
     }
 
     /**
@@ -98,26 +111,33 @@ public class Parser {
         String command = input.trim();
         String lowerCaseCommand = command.toLowerCase();
         if (command.equalsIgnoreCase("list")) {
-            return new Command(CommandType.LIST, null, -1);
+            return new Command(CommandType.LIST, null, -1, null);
+        }
+        if (isCommand(lowerCaseCommand, "find")) {
+            String keyword = command.substring("find".length()).trim();
+            if (keyword.isEmpty()) {
+                throw new BobbyException("Please provide a keyword to search for.");
+            }
+            return new Command(CommandType.FIND, null, -1, keyword);
         }
         if (isCommand(lowerCaseCommand, "mark")) {
             return new Command(CommandType.MARK, null,
-                    getTaskIndex(command.substring("mark".length()).trim(), taskCount));
+                    getTaskIndex(command.substring("mark".length()).trim(), taskCount), null);
         }
         if (isCommand(lowerCaseCommand, "unmark")) {
             return new Command(CommandType.UNMARK, null,
-                    getTaskIndex(command.substring("unmark".length()).trim(), taskCount));
+                    getTaskIndex(command.substring("unmark".length()).trim(), taskCount), null);
         }
         if (isCommand(lowerCaseCommand, "delete")) {
             return new Command(CommandType.DELETE, null,
-                    getTaskIndex(command.substring("delete".length()).trim(), taskCount));
+                    getTaskIndex(command.substring("delete".length()).trim(), taskCount), null);
         }
         if (isCommand(lowerCaseCommand, "todo")) {
             String description = command.substring("todo".length()).trim();
             if (description.isEmpty()) {
                 throw new BobbyException("You don't have a task after the todo.");
             }
-            return new Command(CommandType.ADD, new Todo(description), -1);
+            return new Command(CommandType.ADD, new Todo(description), -1, null);
         }
         if (isCommand(lowerCaseCommand, "deadline")) {
             String[] parts = command.substring("deadline".length()).trim().split(" /by ", 2);
@@ -125,7 +145,7 @@ public class Parser {
                 throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
             }
             return new Command(CommandType.ADD,
-                    new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1);
+                    new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1, null);
         }
         if (isCommand(lowerCaseCommand, "event")) {
             String eventDetails = command.substring("event".length()).trim();
@@ -136,7 +156,7 @@ public class Parser {
                 throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
             }
             return new Command(CommandType.ADD, new Event(fromParts[0].trim(),
-                    parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1);
+                    parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1, null);
         }
         throw new BobbyException("I don't understand what you said. Please use the correct commands");
     }
