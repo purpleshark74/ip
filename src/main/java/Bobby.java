@@ -4,13 +4,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Runs Bobby's command-line task list application.
  */
 public class Bobby {
-    private static final String LINE = "____________________________________________________________";
     private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
 
@@ -20,37 +18,23 @@ public class Bobby {
      * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
-        String banner = "BBBB   OOO   BBBB  BBBB  Y   Y\n"
-                + "B   B O   O  B   B B   B  Y Y\n"
-                + "BBBB  O   O  BBBB  BBBB    Y\n"
-                + "B   B O   O  B   B B   B   Y\n"
-                + "BBBB   OOO   BBBB  BBBB    Y";
-        System.out.println(LINE);
-        System.out.println(banner);
-        System.out.println(LINE);
-        System.out.println("     Hello, I'm Bobby.");
-        System.out.println("     What can I do for you?");
-        System.out.println(LINE);
-
-        ArrayList<Task> tasks = loadTasks();
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine();
+        Ui ui = new Ui();
+        ui.showWelcome();
+        ArrayList<Task> tasks = loadTasks(ui);
+        while (ui.hasNextCommand()) {
+            String input = ui.readCommand();
             if (input.trim().equalsIgnoreCase("bye")) {
                 break;
             }
-            System.out.println(LINE);
+            ui.showLine();
             try {
-                processCommand(input, tasks);
+                processCommand(input, tasks, ui);
             } catch (BobbyException e) {
-                System.out.println("     " + e.getMessage());
+                ui.showError(e.getMessage());
             }
-            System.out.println(LINE);
+            ui.showLine();
         }
-
-        System.out.println(LINE);
-        System.out.println("     Bye! Hope to see you again soon.");
-        System.out.println(LINE);
+        ui.showGoodbye();
     }
 
     /**
@@ -58,25 +42,26 @@ public class Bobby {
      *
      * @param input the user's command
      * @param tasks the task list
+     * @param ui the console user interface
      * @throws BobbyException if the command is invalid
      */
-    private static void processCommand(String input, ArrayList<Task> tasks) throws BobbyException {
+    private static void processCommand(String input, ArrayList<Task> tasks, Ui ui) throws BobbyException {
         String command = input.trim();
         String lowerCaseCommand = command.toLowerCase();
         if (command.equalsIgnoreCase("list")) {
-            printTaskList(tasks);
+            ui.showTaskList(tasks);
             return;
         }
         if (isCommand(lowerCaseCommand, "mark")) {
-            markTask(command, tasks, true);
+            markTask(command, tasks, true, ui);
             return;
         }
         if (isCommand(lowerCaseCommand, "unmark")) {
-            markTask(command, tasks, false);
+            markTask(command, tasks, false, ui);
             return;
         }
         if (isCommand(lowerCaseCommand, "delete")) {
-            deleteTask(command, tasks);
+            deleteTask(command, tasks, ui);
             return;
         }
         if (isCommand(lowerCaseCommand, "todo")) {
@@ -84,7 +69,7 @@ public class Bobby {
             if (description.isEmpty()) {
                 throw new BobbyException("You don't have a task after the todo.");
             }
-            addTask(new Todo(description), tasks);
+            addTask(new Todo(description), tasks, ui);
             return;
         }
         if (isCommand(lowerCaseCommand, "deadline")) {
@@ -92,7 +77,7 @@ public class Bobby {
             if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
                 throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
             }
-            addTask(new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), tasks);
+            addTask(new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), tasks, ui);
             return;
         }
         if (isCommand(lowerCaseCommand, "event")) {
@@ -104,7 +89,7 @@ public class Bobby {
                 throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
             }
             addTask(new Event(fromParts[0].trim(), parseDateTime(toParts[0].trim()),
-                    parseDateTime(toParts[1].trim())), tasks);
+                    parseDateTime(toParts[1].trim())), tasks, ui);
             return;
         }
         throw new BobbyException("I don't understand what you said. Please use the correct commands");
@@ -125,35 +110,32 @@ public class Bobby {
     }
 
     /** Adds a task to the dynamically sized task list and prints confirmation. */
-    private static void addTask(Task task, ArrayList<Task> tasks) throws BobbyException {
+    private static void addTask(Task task, ArrayList<Task> tasks, Ui ui) throws BobbyException {
         tasks.add(task);
         saveTasks(tasks);
-        printAddedTask(tasks);
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /** Marks or unmarks the task identified by the command's task number. */
-    private static void markTask(String command, ArrayList<Task> tasks, boolean isDone) throws BobbyException {
+    private static void markTask(String command, ArrayList<Task> tasks, boolean isDone, Ui ui)
+            throws BobbyException {
         String commandWord = isDone ? "mark" : "unmark";
         int index = getTaskIndex(command.substring(commandWord.length()).trim(), tasks.size());
         if (isDone) {
             tasks.get(index).markAsDone();
-            System.out.println("     Nice! I've marked this task as done:");
         } else {
             tasks.get(index).markAsNotDone();
-            System.out.println("     OK, I've marked this task as not done yet:");
         }
         saveTasks(tasks);
-        System.out.println("       " + tasks.get(index));
+        ui.showTaskMarked(tasks.get(index), isDone);
     }
 
     /** Removes the task identified by the command's task number and prints confirmation. */
-    private static void deleteTask(String command, ArrayList<Task> tasks) throws BobbyException {
+    private static void deleteTask(String command, ArrayList<Task> tasks, Ui ui) throws BobbyException {
         int index = getTaskIndex(command.substring("delete".length()).trim(), tasks.size());
         Task removedTask = tasks.remove(index);
         saveTasks(tasks);
-        System.out.println("     Noted. I've removed this task:");
-        System.out.println("       " + removedTask);
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTaskDeleted(removedTask, tasks.size());
     }
 
     /** Converts a one-based task number to a valid zero-based task-list index. */
@@ -179,37 +161,13 @@ public class Bobby {
     }
 
     /** Loads saved tasks and starts with an empty list when the save file is unavailable or invalid. */
-    private static ArrayList<Task> loadTasks() {
+    private static ArrayList<Task> loadTasks(Ui ui) {
         try {
             return new ArrayList<>(Storage.load());
         } catch (IOException e) {
-            System.out.println(LINE);
-            System.out.println("     Unable to load tasks from disk. Starting with an empty list.");
-            System.out.println(LINE);
+            ui.showLoadingError();
             return new ArrayList<>();
         }
     }
 
-    /** Prints all tasks, or a message when the list is empty. */
-    private static void printTaskList(ArrayList<Task> tasks) {
-        if (tasks.isEmpty()) {
-            System.out.println("No tasks added yet.");
-            return;
-        }
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println("     " + (i + 1) + "." + tasks.get(i));
-        }
-    }
-
-    /**
-     * Prints confirmation after the most recently added task.
-     *
-     * @param tasks the task list
-     */
-    private static void printAddedTask(ArrayList<Task> tasks) {
-        System.out.println("     Got it. I've added this task:");
-        System.out.println("       " + tasks.get(tasks.size() - 1));
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
-    }
 }
