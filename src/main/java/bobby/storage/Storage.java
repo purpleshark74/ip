@@ -53,7 +53,9 @@ public class Storage {
         return tasks;
     }
 
-    /** Converts one saved line into the corresponding task object. */
+    /**
+     * Converts one saved line into the corresponding task object.
+     */
     private static Task parseTask(String line) throws IOException {
         String[] parts = line.split("\\|", -1);
         for (int i = 0; i < parts.length; i++) {
@@ -66,26 +68,26 @@ public class Storage {
 
         Task task;
         switch (parts[0]) {
-        case "T":
-            if (parts.length != 3) {
-                throw new IOException("Invalid to-do data.");
-            }
-            task = new Todo(parts[2]);
-            break;
-        case "D":
-            if (parts.length != 4 || parts[3].isEmpty()) {
-                throw new IOException("Invalid deadline data.");
-            }
-            task = new Deadline(parts[2], parseDateTime(parts[3]));
-            break;
-        case "E":
-            if (parts.length != 5 || parts[3].isEmpty() || parts[4].isEmpty()) {
-                throw new IOException("Invalid event data.");
-            }
-            task = new Event(parts[2], parseDateTime(parts[3]), parseDateTime(parts[4]));
-            break;
-        default:
-            throw new IOException("Unknown task type.");
+            case "T":
+                if (parts.length != 3) {
+                    throw new IOException("Invalid to-do data.");
+                }
+                task = new Todo(parts[2]);
+                break;
+            case "D":
+                if (parts.length != 4 || parts[3].isEmpty()) {
+                    throw new IOException("Invalid deadline data.");
+                }
+                task = new Deadline(parts[2], parseDateTime(parts[3]));
+                break;
+            case "E":
+                if (parts.length != 5 || parts[3].isEmpty() || parts[4].isEmpty()) {
+                    throw new IOException("Invalid event data.");
+                }
+                task = new Event(parts[2], parseDateTime(parts[3]), parseDateTime(parts[4]));
+                break;
+            default:
+                throw new IOException("Unknown task type.");
         }
 
         if (parts[1].equals("1")) {
@@ -96,7 +98,9 @@ public class Storage {
         return task;
     }
 
-    /** Parses an ISO-8601 date and time saved in the task file. */
+    /**
+     * Parses an ISO-8601 date and time saved in the task file.
+     */
     private static LocalDateTime parseDateTime(String dateTime) throws IOException {
         try {
             return LocalDateTime.parse(dateTime);

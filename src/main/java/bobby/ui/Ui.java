@@ -25,7 +25,9 @@ public class Ui {
         scanner = new Scanner(System.in);
     }
 
-    /** Displays the welcome banner. */
+    /**
+     * Displays the welcome banner.
+     */
     public void showWelcome() {
         System.out.println(LINE);
         System.out.println(BANNER);
@@ -53,7 +55,9 @@ public class Ui {
         return scanner.nextLine();
     }
 
-    /** Displays a separator before or after a command response. */
+    /**
+     * Displays a separator before or after a command response.
+     */
     public void showLine() {
         System.out.println(LINE);
     }
@@ -67,7 +71,9 @@ public class Ui {
         System.out.println("     " + message);
     }
 
-    /** Displays an error when saved tasks cannot be loaded. */
+    /**
+     * Displays an error when saved tasks cannot be loaded.
+     */
     public void showLoadingError() {
         showLine();
         System.out.println("     Unable to load tasks from disk. Starting with an empty list.");
@@ -129,7 +135,9 @@ public class Ui {
         System.out.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
-    /** Displays Bobby's farewell message. */
+    /**
+     * Displays Bobby's farewell message.
+     */
     public void showGoodbye() {
         showLine();
         System.out.println("     Bye! Hope to see you again soon.");

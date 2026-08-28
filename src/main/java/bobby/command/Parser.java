@@ -141,12 +141,16 @@ public class Parser {
         throw new BobbyException("I don't understand what you said. Please use the correct commands");
     }
 
-    /** Returns whether the input is exactly a command word or begins with that word followed by text. */
+    /**
+     * Returns whether the input is exactly a command word or begins with that word followed by text.
+     */
     private static boolean isCommand(String input, String commandWord) {
         return input.equals(commandWord) || input.startsWith(commandWord + " ");
     }
 
-    /** Parses a date and time entered in {@code yyyy-MM-dd HHmm} format. */
+    /**
+     * Parses a date and time entered in {@code yyyy-MM-dd HHmm} format.
+     */
     private static LocalDateTime parseDateTime(String dateTime) throws BobbyException {
         try {
             return LocalDateTime.parse(dateTime, INPUT_DATE_TIME_FORMAT);
@@ -155,7 +159,9 @@ public class Parser {
         }
     }
 
-    /** Converts a one-based task number to a valid zero-based task-list index. */
+    /**
+     * Converts a one-based task number to a valid zero-based task-list index.
+     */
     private static int getTaskIndex(String taskNumber, int taskCount) throws BobbyException {
         try {
             int index = Integer.parseInt(taskNumber) - 1;
