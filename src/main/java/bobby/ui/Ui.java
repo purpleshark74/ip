@@ -1,5 +1,9 @@
+package bobby.ui;
+
 import java.util.List;
 import java.util.Scanner;
+
+import bobby.task.Task;
 
 /**
  * Handles all console input and output for Bobby.
@@ -76,11 +80,11 @@ public class Ui {
      * @param tasks the tasks to display
      */
     public void showTaskList(List<Task> tasks) {
+        System.out.println("Here are the tasks in your list:");
         if (tasks.isEmpty()) {
             System.out.println("No tasks added yet.");
             return;
         }
-        System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println("     " + (i + 1) + "." + tasks.get(i));
         }

@@ -1,3 +1,7 @@
+package bobby.task;
+
+import bobby.storage.Storage;
+
 /**
  * Represents one task in Bobby's task list.
  */
