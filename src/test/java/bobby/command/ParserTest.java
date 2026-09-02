@@ -100,7 +100,7 @@ class ParserTest {
      * Verifies that one-based task numbers are converted to zero-based indices.
      */
     @Test
-    void parse_taskCommands_validTaskNumbers_zeroBasedIndicesReturned() throws BobbyException {
+    void parseTaskCommands_validTaskNumbers_zeroBasedIndicesReturned() throws BobbyException {
         Parser.Command markCommand = Parser.parse("mark 1", 3);
         Parser.Command unmarkCommand = Parser.parse("unmark 2", 3);
         Parser.Command deleteCommand = Parser.parse("delete 3", 3);
@@ -117,7 +117,7 @@ class ParserTest {
      * Verifies that task commands reject missing, non-numeric, and out-of-range task numbers.
      */
     @Test
-    void parse_taskCommands_invalidTaskNumber_exceptionThrown() {
+    void parseTaskCommands_invalidTaskNumber_exceptionThrown() {
         assertInvalidTaskNumber("mark", 1);
         assertInvalidTaskNumber("unmark zero", 1);
         assertInvalidTaskNumber("delete 0", 1);
@@ -149,10 +149,10 @@ class ParserTest {
      */
     @Test
     void parse_dateBasedCommandInvalidDetails_exceptionThrown() {
-        BobbyException invalidDateException = assertThrows(BobbyException.class,
-                () -> Parser.parse("deadline submit report /by 2026-02-29 1200", 0));
-        BobbyException missingEventDetailsException = assertThrows(BobbyException.class,
-                () -> Parser.parse("event meeting /from 2026-09-01 1400", 0));
+        BobbyException invalidDateException = assertThrows(BobbyException.class, () ->
+                Parser.parse("deadline submit report /by 2026-02-29 1200", 0));
+        BobbyException missingEventDetailsException = assertThrows(BobbyException.class, () ->
+                Parser.parse("event meeting /from 2026-09-01 1400", 0));
 
         assertEquals("Please use dates and times in YYYY-MM-DD HHMM format.",
                 invalidDateException.getMessage());
