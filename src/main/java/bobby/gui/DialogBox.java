@@ -1,9 +1,14 @@
 package bobby.gui;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -15,26 +20,34 @@ import javafx.scene.layout.HBox;
  * Displays a chat message beside its speaker's profile image.
  */
 public class DialogBox extends HBox {
-    private static final double DISPLAY_PICTURE_SIZE = 100.0;
+    @FXML
+    private Label dialog;
 
-    private final Label text;
-    private final ImageView displayPicture;
+    @FXML
+    private ImageView displayPicture;
 
     /**
-     * Creates a right-aligned dialog box for a message and profile image.
+     * Creates a dialog box backed by its FXML view.
      *
      * @param message the message to display.
      * @param image the speaker's profile image.
      */
     private DialogBox(String message, Image image) {
-        text = new Label(message);
-        displayPicture = new ImageView(image);
+        URL dialogBoxView = Objects.requireNonNull(
+                DialogBox.class.getResource("/view/DialogBox.fxml"),
+                "Missing dialog-box FXML resource");
+        FXMLLoader fxmlLoader = new FXMLLoader(dialogBoxView);
+        fxmlLoader.setController(this);
+        fxmlLoader.setRoot(this);
 
-        text.setWrapText(true);
-        displayPicture.setFitWidth(DISPLAY_PICTURE_SIZE);
-        displayPicture.setFitHeight(DISPLAY_PICTURE_SIZE);
-        setAlignment(Pos.TOP_RIGHT);
-        getChildren().addAll(text, displayPicture);
+        try {
+            fxmlLoader.load();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load a dialog box.", e);
+        }
+
+        dialog.setText(message);
+        displayPicture.setImage(image);
     }
 
     /**
