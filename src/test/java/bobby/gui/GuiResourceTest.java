@@ -23,4 +23,13 @@ class GuiResourceTest {
     void dialogBoxFxml_applicationResources_resourceFound() {
         assertNotNull(DialogBox.class.getResource("/view/DialogBox.fxml"));
     }
+
+    /**
+     * Verifies that both profile images are packaged as resources.
+     */
+    @Test
+    void profileImages_applicationResources_resourcesFound() {
+        assertNotNull(MainWindow.class.getResource("/images/User_Icon.png"));
+        assertNotNull(MainWindow.class.getResource("/images/Bobby_Head.png"));
+    }
 }

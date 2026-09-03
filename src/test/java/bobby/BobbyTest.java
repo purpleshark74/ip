@@ -1,6 +1,8 @@
 package bobby;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -66,5 +68,17 @@ class BobbyTest {
         String response = bobby.getResponse("bye");
 
         assertEquals("     Bye! Hope to see you again soon.", response);
+    }
+
+    /**
+     * Verifies that only the exit command requests application termination.
+     */
+    @Test
+    void isExitCommand_variedCommands_expectedExitDecisionsReturned() {
+        Bobby bobby = new Bobby(new TaskList());
+
+        assertTrue(bobby.isExitCommand("  ByE  "));
+        assertFalse(bobby.isExitCommand("bye now"));
+        assertFalse(bobby.isExitCommand("list"));
     }
 }

@@ -77,7 +77,7 @@ public class Bobby {
      * @return Bobby's response for the command.
      */
     public String getResponse(String input) {
-        if (Parser.isByeCommand(input)) {
+        if (isExitCommand(input)) {
             return "     Bye! Hope to see you again soon.";
         }
 
@@ -87,6 +87,16 @@ public class Bobby {
         } catch (BobbyException e) {
             return "     " + e.getMessage();
         }
+    }
+
+    /**
+     * Returns whether a command should terminate Bobby.
+     *
+     * @param input the user's raw command.
+     * @return {@code true} when the command is {@code bye}.
+     */
+    public boolean isExitCommand(String input) {
+        return Parser.isByeCommand(input);
     }
 
     /**

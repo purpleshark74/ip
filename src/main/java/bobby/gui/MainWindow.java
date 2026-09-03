@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import bobby.Bobby;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -15,7 +16,7 @@ import javafx.scene.layout.VBox;
  * Controls Bobby's main chat window.
  */
 public class MainWindow extends AnchorPane {
-    private final Image userImage = loadImage("/images/User_Icon.jpg");
+    private final Image userImage = loadImage("/images/User_Icon.png");
     private final Image bobbyImage = loadImage("/images/Bobby_Head.png");
 
     @FXML
@@ -54,10 +55,14 @@ public class MainWindow extends AnchorPane {
     private void handleUserInput() {
         String userText = userInput.getText();
         String bobbyText = bobby.getResponse(userText);
+        boolean shouldExit = bobby.isExitCommand(userText);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText, userImage),
                 DialogBox.getBobbyDialog(bobbyText, bobbyImage));
         userInput.clear();
+        if (shouldExit) {
+            Platform.exit();
+        }
     }
 
     /**
