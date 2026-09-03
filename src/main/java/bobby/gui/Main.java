@@ -3,6 +3,7 @@ package bobby.gui;
 import java.io.InputStream;
 import java.util.Objects;
 
+import bobby.Bobby;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,6 +23,8 @@ public class Main extends Application {
     private static final double WINDOW_HEIGHT = 600.0;
 
     private final Image userImage = loadImage("/images/User_Icon.jpg");
+    private final Image bobbyImage = loadImage("/images/Bobby_Head.png");
+    private final Bobby bobby = new Bobby();
 
     private ScrollPane scrollPane;
     private VBox dialogContainer;
@@ -36,8 +39,6 @@ public class Main extends Application {
 
         userInput = new TextField();
         sendButton = new Button("Send");
-        DialogBox dialogBox = new DialogBox("Hello!", userImage);
-        dialogContainer.getChildren().add(dialogBox);
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
@@ -45,6 +46,7 @@ public class Main extends Application {
         Scene scene = new Scene(mainLayout);
         stage.setScene(scene);
         formatWindow(stage, mainLayout);
+        configureInteractions();
         stage.show();
     }
 
@@ -76,6 +78,28 @@ public class Main extends Application {
         AnchorPane.setRightAnchor(sendButton, 1.0);
         AnchorPane.setLeftAnchor(userInput, 1.0);
         AnchorPane.setBottomAnchor(userInput, 1.0);
+    }
+
+    /**
+     * Connects user actions and automatic scrolling to their handlers.
+     */
+    private void configureInteractions() {
+        sendButton.setOnAction(event -> handleUserInput());
+        userInput.setOnAction(event -> handleUserInput());
+        dialogContainer.heightProperty().addListener(
+                observable -> scrollPane.setVvalue(1.0));
+    }
+
+    /**
+     * Displays the user's command and Bobby's response, then clears the input.
+     */
+    private void handleUserInput() {
+        String userText = userInput.getText();
+        String bobbyText = bobby.getResponse(userText);
+        dialogContainer.getChildren().addAll(
+                DialogBox.getUserDialog(userText, userImage),
+                DialogBox.getBobbyDialog(bobbyText, bobbyImage));
+        userInput.clear();
     }
 
     /**
