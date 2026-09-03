@@ -1,9 +1,6 @@
 package bobby.ui;
 
-import java.util.List;
 import java.util.Scanner;
-
-import bobby.task.Task;
 
 /**
  * Handles all console input and output for Bobby.
@@ -40,7 +37,7 @@ public class Ui {
     /**
      * Returns whether another command is available from the user.
      *
-     * @return {@code true} when another input line can be read
+     * @return {@code true} when another input line can be read.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -49,7 +46,7 @@ public class Ui {
     /**
      * Reads the next command entered by the user.
      *
-     * @return the command line
+     * @return the command line.
      */
     public String readCommand() {
         return scanner.nextLine();
@@ -63,12 +60,12 @@ public class Ui {
     }
 
     /**
-     * Displays an error caused by an invalid command.
+     * Displays Bobby's response to a command.
      *
-     * @param message the error message to display
+     * @param response the text to display.
      */
-    public void showError(String message) {
-        System.out.println("     " + message);
+    public void showResponse(String response) {
+        System.out.println(response);
     }
 
     /**
@@ -78,77 +75,6 @@ public class Ui {
         showLine();
         System.out.println("     Unable to load tasks from disk. Starting with an empty list.");
         showLine();
-    }
-
-    /**
-     * Displays all tasks, or an empty-list message when no tasks exist.
-     *
-     * @param tasks the tasks to display
-     */
-    public void showTaskList(List<Task> tasks) {
-        System.out.println("Here are the tasks in your list:");
-        if (tasks.isEmpty()) {
-            System.out.println("No tasks added yet.");
-            return;
-        }
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println("     " + (i + 1) + "." + tasks.get(i));
-        }
-    }
-
-    /**
-     * Displays tasks whose descriptions match a search keyword.
-     *
-     * @param tasks the matching tasks to display
-     */
-    public void showMatchingTasks(List<Task> tasks) {
-        System.out.println("Here are the matching tasks in your list:");
-        if (tasks.isEmpty()) {
-            System.out.println("No matching tasks found.");
-            return;
-        }
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println("     " + (i + 1) + "." + tasks.get(i));
-        }
-    }
-
-    /**
-     * Displays confirmation after a task is added.
-     *
-     * @param task the task that was added
-     * @param taskCount the new number of tasks
-     */
-    public void showTaskAdded(Task task, int taskCount) {
-        System.out.println("     Got it. I've added this task:");
-        System.out.println("       " + task);
-        System.out.println("     Now you have " + taskCount + " tasks in the list.");
-    }
-
-    /**
-     * Displays confirmation after a task's completion state changes.
-     *
-     * @param task the task whose state changed
-     * @param isDone whether the task is now done
-     */
-    public void showTaskMarked(Task task, boolean isDone) {
-        if (isDone) {
-            System.out.println("     Nice! I've marked this task as done:");
-        } else {
-            System.out.println("     OK, I've marked this task as not done yet:");
-        }
-        System.out.println("       " + task);
-    }
-
-    /**
-     * Displays confirmation after a task is deleted.
-     *
-     * @param task the task that was deleted
-     * @param taskCount the number of remaining tasks
-     */
-    public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println("     Noted. I've removed this task:");
-        System.out.println("       " + task);
-        System.out.println("     Now you have " + taskCount + " tasks in the list.");
     }
 
     /**
