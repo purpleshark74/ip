@@ -23,6 +23,7 @@ public final class Parser {
     private static final String FIND_COMMAND = "find";
     private static final String LIST_COMMAND = "list";
     private static final String MARK_COMMAND = "mark";
+    private static final String STATS_COMMAND = "stats";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String UNKNOWN_COMMAND_MESSAGE =
             "I don't understand what you said. Please use the correct commands";
@@ -35,6 +36,7 @@ public final class Parser {
     /** Identifies the operation represented by a parsed command. */
     public enum CommandType {
         LIST,
+        STATS,
         FIND,
         ADD,
         MARK,
@@ -150,6 +152,8 @@ public final class Parser {
         switch (commandWord) {
             case LIST_COMMAND:
                 return parseListCommand(command);
+            case STATS_COMMAND:
+                return parseStatsCommand(command);
             case FIND_COMMAND:
                 return parseFindCommand(command);
             case MARK_COMMAND:
@@ -185,6 +189,16 @@ public final class Parser {
             throw new BobbyException(UNKNOWN_COMMAND_MESSAGE);
         }
         return new Command(CommandType.LIST, null, -1, null);
+    }
+
+    /**
+     * Parses a statistics command that must not contain arguments.
+     */
+    private static Command parseStatsCommand(String command) throws BobbyException {
+        if (!command.equalsIgnoreCase(STATS_COMMAND)) {
+            throw new BobbyException("Please use: stats");
+        }
+        return new Command(CommandType.STATS, null, -1, null);
     }
 
     /**

@@ -568,13 +568,13 @@ ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.
 ____________________________________________________________
-D | 0 | return book | 2019-06-06T18:00
-E | 0 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00
+D | 0 | return book | 2019-06-06T18:00 | -
+E | 0 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00 | -
 ```
 
 ## T08 — saved tasks load when the application starts
 
-**Aim:** A valid save file restores to-do, deadline, and event tasks with their saved completion states before the first command is processed.
+**Aim:** A valid legacy save file restores to-do, deadline, and event tasks with their saved completion states before the first command is processed.
 
 **Inputs:**
 
@@ -717,6 +717,68 @@ ____________________________________________________________
 Here are the matching tasks in your list:
      1.[T][X] read book
      2.[D][X] return book (by: Jun 06 2019 6:00 PM)
+____________________________________________________________
+____________________________________________________________
+     Bye! Hope to see you again soon.
+____________________________________________________________
+```
+
+## T11 — show current-week task statistics
+
+**Aim:** The statistics command reports the current Monday-to-Sunday period and summarizes completed and pending tasks without listing task descriptions.
+
+**Inputs:**
+
+```text
+todo read book
+todo buy groceries
+mark 1
+stats
+bye
+```
+
+**Command:**
+
+```powershell
+Remove-Item data/bobby.txt -ErrorAction Ignore; $consoleSources = Get-ChildItem -Recurse -Filter *.java -Path src/main/java | Where-Object { $_.FullName -notmatch '\\bobby\\gui\\' -and $_.Name -ne 'Launcher.java' } | ForEach-Object FullName; javac --release 25 -d out/date-time-verification $consoleSources; "todo read book", "todo buy groceries", "mark 1", "stats", "bye" | java -cp out/date-time-verification bobby.Bobby
+```
+
+**Comparison rule:** Verify that the actual `Period` dates are the Monday and Sunday containing the local execution date. Then replace that line with the placeholder shown below before applying the standard exact-output comparison.
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Hello, I'm Bobby.
+     What can I do for you?
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy groceries
+     Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+____________________________________________________________
+____________________________________________________________
+Here are your task statistics:
+     Period: <CURRENT_WEEK>
+     Currently completed this week: 1
+     Completed overall: 1
+     Pending: 1
+     Total: 2
 ____________________________________________________________
 ____________________________________________________________
      Bye! Hope to see you again soon.

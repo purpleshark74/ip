@@ -1,7 +1,14 @@
 package bobby;
 
 import java.io.IOException;
+import java.time.Clock;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Locale;
 
 import bobby.command.Parser;
 import bobby.exception.BobbyException;
@@ -14,8 +21,12 @@ import bobby.ui.Ui;
  * Executes task-list commands for Bobby's console and graphical interfaces.
  */
 public class Bobby {
+    private static final DateTimeFormatter STATISTICS_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
+
     private final TaskList tasks;
     private final boolean hasLoadingError;
+    private final Clock clock;
 
     /**
      * Creates a Bobby instance backed by the task list saved on disk.
@@ -32,6 +43,7 @@ public class Bobby {
         }
         tasks = loadedTasks;
         hasLoadingError = didLoadingFail;
+        clock = Clock.systemDefaultZone();
     }
 
     /**
@@ -40,8 +52,21 @@ public class Bobby {
      * @param tasks the initial task list.
      */
     Bobby(TaskList tasks) {
+        this(tasks, Clock.systemDefaultZone());
+    }
+
+    /**
+     * Creates a Bobby instance with a supplied task list and clock.
+     *
+     * @param tasks the initial task list.
+     * @param clock the clock used to record and report task completion times.
+     */
+    Bobby(TaskList tasks, Clock clock) {
+        assert tasks != null : "Initial task list must not be null";
+        assert clock != null : "Clock must not be null";
         this.tasks = tasks;
         hasLoadingError = false;
+        this.clock = clock;
     }
 
     /**
@@ -111,6 +136,8 @@ public class Bobby {
             case LIST:
                 return formatTasks("Here are the tasks in your list:",
                         "No tasks added yet.", tasks.asList());
+            case STATS:
+                return formatStatistics();
             case FIND:
                 return formatTasks("Here are the matching tasks in your list:",
                         "No matching tasks found.", tasks.findTasksContaining(command.getKeyword()));
@@ -152,7 +179,7 @@ public class Bobby {
      */
     private String markTask(int index, boolean isDone) throws BobbyException {
         if (isDone) {
-            tasks.markAsDone(index);
+            tasks.markAsDone(index, LocalDateTime.now(clock));
         } else {
             tasks.markAsNotDone(index);
         }
@@ -212,5 +239,31 @@ public class Bobby {
                     .append(displayedTasks.get(i));
         }
         return response.toString();
+    }
+
+    /**
+     * Formats statistics for the current Monday-to-Sunday calendar week.
+     *
+     * @return the current task statistics.
+     */
+    private String formatStatistics() {
+        LocalDateTime currentDateTime = LocalDateTime.now(clock);
+        LocalDate weekStartDate = currentDateTime.toLocalDate()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate weekEndDate = weekStartDate.plusDays(6);
+        LocalDateTime weekStartDateTime = weekStartDate.atStartOfDay();
+        LocalDateTime nextWeekStartDateTime = weekStartDate.plusWeeks(1).atStartOfDay();
+        long completedThisWeek = tasks.countTasksCompletedBetween(
+                weekStartDateTime, nextWeekStartDateTime);
+        long completedOverall = tasks.countCompletedTasks();
+        long pending = tasks.size() - completedOverall;
+
+        return "Here are your task statistics:\n"
+                + "     Period: " + weekStartDate.format(STATISTICS_DATE_FORMAT)
+                + " to " + weekEndDate.format(STATISTICS_DATE_FORMAT) + "\n"
+                + "     Currently completed this week: " + completedThisWeek + "\n"
+                + "     Completed overall: " + completedOverall + "\n"
+                + "     Pending: " + pending + "\n"
+                + "     Total: " + tasks.size();
     }
 }

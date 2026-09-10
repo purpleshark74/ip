@@ -39,7 +39,8 @@ public class Event extends Task {
     @Override
     public String toFileString() {
         return "E | " + (isDone ? "1" : "0") + " | " + description
-                + " | " + startDateTime + " | " + endDateTime;
+                + " | " + startDateTime + " | " + endDateTime
+                + " | " + getCompletionDateTimeFileValue();
     }
 
     /**

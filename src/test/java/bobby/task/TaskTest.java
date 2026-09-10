@@ -18,7 +18,7 @@ class TaskTest {
     void toFileString_newTask_incompleteRecordReturned() {
         Task task = new Task("read book");
 
-        assertEquals("T | 0 | read book", task.toFileString());
+        assertEquals("T | 0 | read book | -", task.toFileString());
     }
 
     /**
@@ -29,7 +29,32 @@ class TaskTest {
         Task task = new Task("read book");
         task.markAsDone();
 
-        assertEquals("T | 1 | read book", task.toFileString());
+        assertEquals("T | 1 | read book | -", task.toFileString());
+    }
+
+    /**
+     * Verifies that completion timestamps are truncated, preserved, cleared, and replaced as specified.
+     */
+    @Test
+    void completionDateTime_statusChanges_expectedCompletionDateTimeStored() {
+        Task task = new Task("read book");
+        LocalDateTime firstCompletion = LocalDateTime.of(2026, 9, 8, 10, 15, 30, 123_000_000);
+        LocalDateTime secondCompletion = LocalDateTime.of(2026, 9, 9, 11, 20, 45);
+
+        task.markAsDone(firstCompletion);
+        task.markAsDone(secondCompletion);
+
+        assertEquals("T | 1 | read book | 2026-09-08T10:15:30", task.toFileString());
+        assertEquals(true, task.hasKnownCompletionDateTime());
+
+        task.markAsNotDone();
+
+        assertEquals("T | 0 | read book | -", task.toFileString());
+        assertEquals(false, task.hasKnownCompletionDateTime());
+
+        task.markAsDone(secondCompletion);
+
+        assertEquals("T | 1 | read book | 2026-09-09T11:20:45", task.toFileString());
     }
 
     /**
