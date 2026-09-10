@@ -170,6 +170,22 @@ class ParserTest {
     }
 
     /**
+     * Verifies that parsing rejects programmer-supplied state that no task list can have.
+     */
+    @Test
+    void parse_negativeTaskCount_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> Parser.parse("list", -1));
+    }
+
+    /**
+     * Verifies that parsing rejects a missing command before attempting to inspect it.
+     */
+    @Test
+    void parse_nullInput_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> Parser.parse(null, 0));
+    }
+
+    /**
      * Verifies that a command reports the standard invalid-task-number message.
      *
      * @param input the command to parse
