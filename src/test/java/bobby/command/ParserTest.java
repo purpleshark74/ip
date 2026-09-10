@@ -75,7 +75,7 @@ class ParserTest {
      */
     @Test
     void parse_deadlineCommand_deadlineTaskReturned() throws BobbyException {
-        Parser.Command command = Parser.parse("deadline return book /by 2026-09-01 1400", 0);
+        Parser.Command command = Parser.parse("DEADLINE return book /by 2026-09-01 1400", 0);
 
         assertEquals(Parser.CommandType.ADD, command.getType());
         Deadline task = assertInstanceOf(Deadline.class, command.getTask());
@@ -88,7 +88,7 @@ class ParserTest {
     @Test
     void parse_eventCommand_eventTaskReturned() throws BobbyException {
         Parser.Command command = Parser.parse(
-                "event project meeting /from 2026-09-01 1400 /to 2026-09-01 1600", 0);
+                "EVENT project meeting /from 2026-09-01 1400 /to 2026-09-01 1600", 0);
 
         assertEquals(Parser.CommandType.ADD, command.getType());
         Event task = assertInstanceOf(Event.class, command.getTask());
@@ -167,6 +167,7 @@ class ParserTest {
     void parse_unknownCommand_exceptionThrown() {
         assertUnknownCommand("remind me");
         assertUnknownCommand("todoing read book");
+        assertUnknownCommand("list extra");
     }
 
     /**
