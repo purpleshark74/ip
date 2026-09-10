@@ -90,14 +90,38 @@ class TaskTest {
     }
 
     /**
+     * Verifies that a deadline labels and formats its deadline date and time.
+     */
+    @Test
+    void toString_deadlineTask_formattedDeadlineReturned() {
+        LocalDateTime deadlineDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        Deadline deadline = new Deadline("return book", deadlineDateTime);
+
+        assertEquals("[D][ ] return book (by: Sep 01 2026 2:00 PM)", deadline.toString());
+    }
+
+    /**
+     * Verifies that an event labels and formats its start and end date-times.
+     */
+    @Test
+    void toString_eventTask_formattedStartAndEndReturned() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 1, 16, 0);
+        Event event = new Event("meeting", startDateTime, endDateTime);
+
+        assertEquals("[E][ ] meeting (from: Sep 01 2026 2:00 PM to: Sep 01 2026 4:00 PM)",
+                event.toString());
+    }
+
+    /**
      * Verifies that date-based tasks reject missing date-time values.
      */
     @Test
     void dateBasedTask_nullDateTime_assertionErrorThrown() {
-        LocalDateTime dateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        LocalDateTime validDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
 
         assertThrows(AssertionError.class, () -> new Deadline("return book", null));
-        assertThrows(AssertionError.class, () -> new Event("meeting", null, dateTime));
-        assertThrows(AssertionError.class, () -> new Event("meeting", dateTime, null));
+        assertThrows(AssertionError.class, () -> new Event("meeting", null, validDateTime));
+        assertThrows(AssertionError.class, () -> new Event("meeting", validDateTime, null));
     }
 }

@@ -13,18 +13,18 @@ public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a", Locale.ENGLISH);
 
-    private final LocalDateTime by;
+    private final LocalDateTime deadlineDateTime;
 
     /**
      * Creates a deadline task.
      *
      * @param description the task description
-     * @param by the deadline date and time
+     * @param deadlineDateTime the deadline date and time
      */
-    public Deadline(String description, LocalDateTime by) {
+    public Deadline(String description, LocalDateTime deadlineDateTime) {
         super(description);
-        assert by != null : "Deadline date and time must not be null";
-        this.by = by;
+        assert deadlineDateTime != null : "Deadline date and time must not be null";
+        this.deadlineDateTime = deadlineDateTime;
     }
 
     /**
@@ -34,7 +34,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toFileString() {
-        return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + by;
+        return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + deadlineDateTime;
     }
 
     /**
@@ -45,6 +45,6 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return "[D][" + getStatusIcon() + "] " + description + " (by: "
-                + by.format(DISPLAY_DATE_FORMAT) + ")";
+                + deadlineDateTime.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }
