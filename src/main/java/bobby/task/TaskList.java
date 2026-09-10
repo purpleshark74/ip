@@ -108,12 +108,10 @@ public class TaskList {
      */
     public List<Task> findTasksContaining(String keyword) {
         String lowerCaseKeyword = keyword.toLowerCase(Locale.ROOT);
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase(Locale.ROOT).contains(lowerCaseKeyword)) {
-                matchingTasks.add(task);
-            }
-        }
-        return List.copyOf(matchingTasks);
+        return tasks.stream()
+                .filter(task -> task.getDescription()
+                        .toLowerCase(Locale.ROOT)
+                        .contains(lowerCaseKeyword))
+                .toList();
     }
 }

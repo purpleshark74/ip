@@ -76,4 +76,16 @@ class TaskListTest {
         assertEquals(List.of(firstTask, secondTask), matchingTasks);
         assertThrows(UnsupportedOperationException.class, () -> matchingTasks.add(thirdTask));
     }
+
+    /**
+     * Verifies that searching for an absent keyword returns an empty list.
+     */
+    @Test
+    void findTasksContaining_noMatchingDescriptions_emptyListReturned() {
+        TaskList taskList = new TaskList(List.of(new Todo("read book"), new Todo("buy groceries")));
+
+        List<Task> matchingTasks = taskList.findTasksContaining("exercise");
+
+        assertEquals(List.of(), matchingTasks);
+    }
 }
