@@ -3,6 +3,7 @@ package bobby.task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Stores and manages the tasks currently used by Bobby.
@@ -23,6 +24,9 @@ public class TaskList {
      * @param tasks the tasks to place in this list
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "Initial task list must not be null";
+        assert tasks.stream().noneMatch(Objects::isNull)
+                : "Initial task list must not contain null tasks";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -32,6 +36,7 @@ public class TaskList {
      * @param task the task to add
      */
     public void add(Task task) {
+        assert task != null : "Task to add must not be null";
         tasks.add(task);
     }
 
@@ -42,6 +47,7 @@ public class TaskList {
      * @return the selected task
      */
     public Task get(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -51,6 +57,7 @@ public class TaskList {
      * @param index the zero-based index
      */
     public void markAsDone(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         tasks.get(index).markAsDone();
     }
 
@@ -60,6 +67,7 @@ public class TaskList {
      * @param index the zero-based index
      */
     public void markAsNotDone(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         tasks.get(index).markAsNotDone();
     }
 
@@ -70,6 +78,7 @@ public class TaskList {
      * @return the removed task
      */
     public Task remove(int index) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
         return tasks.remove(index);
     }
 
@@ -107,11 +116,22 @@ public class TaskList {
      * @return the matching tasks in their original order
      */
     public List<Task> findTasksContaining(String keyword) {
+        assert keyword != null && !keyword.isBlank() : "Search keyword must not be blank";
         String lowerCaseKeyword = keyword.toLowerCase(Locale.ROOT);
         return tasks.stream()
                 .filter(task -> task.getDescription()
                         .toLowerCase(Locale.ROOT)
                         .contains(lowerCaseKeyword))
                 .toList();
+    }
+
+    /**
+     * Returns whether an index refers to a task currently in this list.
+     *
+     * @param index the zero-based index to inspect
+     * @return {@code true} when the index is within the current list bounds
+     */
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < tasks.size();
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.Locale;
 
 import bobby.exception.BobbyException;
 import bobby.task.Deadline;
@@ -14,9 +15,22 @@ import bobby.task.Todo;
 /**
  * Converts user input into commands that Bobby can execute.
  */
-public class Parser {
+public final class Parser {
+    private static final String ADD_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String DELETE_COMMAND = "delete";
+    private static final String EVENT_COMMAND = "event";
+    private static final String FIND_COMMAND = "find";
+    private static final String LIST_COMMAND = "list";
+    private static final String MARK_COMMAND = "mark";
+    private static final String UNMARK_COMMAND = "unmark";
+    private static final String UNKNOWN_COMMAND_MESSAGE =
+            "I don't understand what you said. Please use the correct commands";
     private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
+
+    private Parser() {
+    }
 
     /** Identifies the operation represented by a parsed command. */
     public enum CommandType {
@@ -46,10 +60,30 @@ public class Parser {
          * @param keyword the search keyword, or {@code null} when not applicable
          */
         private Command(CommandType type, Task task, int taskIndex, String keyword) {
+            assert type != null : "Command type must not be null";
+            boolean hasExpectedTask = (type == CommandType.ADD) == (task != null);
+            boolean hasExpectedTaskIndex = isTaskIndexCommand(type) ? taskIndex >= 0 : taskIndex == -1;
+            boolean hasKeyword = keyword != null && !keyword.isBlank();
+            boolean hasExpectedKeyword = (type == CommandType.FIND) == hasKeyword;
+            assert hasExpectedTask : "Only an add command must carry a task";
+            assert hasExpectedTaskIndex : "Only a task-index command must carry a valid task index";
+            assert hasExpectedKeyword : "Only a find command must carry a non-blank keyword";
             this.type = type;
             this.task = task;
             this.taskIndex = taskIndex;
             this.keyword = keyword;
+        }
+
+        /**
+         * Returns whether a command type operates on an existing task by index.
+         *
+         * @param type the command type to inspect
+         * @return {@code true} for mark, unmark, and delete commands
+         */
+        private static boolean isTaskIndexCommand(CommandType type) {
+            return type == CommandType.MARK
+                    || type == CommandType.UNMARK
+                    || type == CommandType.DELETE;
         }
 
         /**
@@ -108,64 +142,125 @@ public class Parser {
      * @throws BobbyException if the command is malformed or has an invalid task number
      */
     public static Command parse(String input, int taskCount) throws BobbyException {
+        assert input != null : "Command input must not be null";
+        assert taskCount >= 0 : "Task count must not be negative";
         String command = input.trim();
-        String lowerCaseCommand = command.toLowerCase();
-        if (command.equalsIgnoreCase("list")) {
-            return new Command(CommandType.LIST, null, -1, null);
+        String commandWord = getCommandWord(command).toLowerCase(Locale.ROOT);
+
+        switch (commandWord) {
+            case LIST_COMMAND:
+                return parseListCommand(command);
+            case FIND_COMMAND:
+                return parseFindCommand(command);
+            case MARK_COMMAND:
+                return parseTaskIndexCommand(CommandType.MARK, command, MARK_COMMAND, taskCount);
+            case UNMARK_COMMAND:
+                return parseTaskIndexCommand(CommandType.UNMARK, command, UNMARK_COMMAND, taskCount);
+            case DELETE_COMMAND:
+                return parseTaskIndexCommand(CommandType.DELETE, command, DELETE_COMMAND, taskCount);
+            case ADD_COMMAND:
+                return parseTodoCommand(command);
+            case DEADLINE_COMMAND:
+                return parseDeadlineCommand(command);
+            case EVENT_COMMAND:
+                return parseEventCommand(command);
+            default:
+                throw new BobbyException(UNKNOWN_COMMAND_MESSAGE);
         }
-        if (isCommand(lowerCaseCommand, "find")) {
-            String keyword = command.substring("find".length()).trim();
-            if (keyword.isEmpty()) {
-                throw new BobbyException("Please provide a keyword to search for.");
-            }
-            return new Command(CommandType.FIND, null, -1, keyword);
-        }
-        if (isCommand(lowerCaseCommand, "mark")) {
-            return new Command(CommandType.MARK, null,
-                    getTaskIndex(command.substring("mark".length()).trim(), taskCount), null);
-        }
-        if (isCommand(lowerCaseCommand, "unmark")) {
-            return new Command(CommandType.UNMARK, null,
-                    getTaskIndex(command.substring("unmark".length()).trim(), taskCount), null);
-        }
-        if (isCommand(lowerCaseCommand, "delete")) {
-            return new Command(CommandType.DELETE, null,
-                    getTaskIndex(command.substring("delete".length()).trim(), taskCount), null);
-        }
-        if (isCommand(lowerCaseCommand, "todo")) {
-            String description = command.substring("todo".length()).trim();
-            if (description.isEmpty()) {
-                throw new BobbyException("You don't have a task after the todo.");
-            }
-            return new Command(CommandType.ADD, new Todo(description), -1, null);
-        }
-        if (isCommand(lowerCaseCommand, "deadline")) {
-            String[] parts = command.substring("deadline".length()).trim().split(" /by ", 2);
-            if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
-            }
-            return new Command(CommandType.ADD,
-                    new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1, null);
-        }
-        if (isCommand(lowerCaseCommand, "event")) {
-            String eventDetails = command.substring("event".length()).trim();
-            String[] fromParts = eventDetails.split(" /from ", 2);
-            String[] toParts = fromParts.length == 2 ? fromParts[1].split(" /to ", 2) : new String[0];
-            if (fromParts.length < 2 || toParts.length < 2 || fromParts[0].trim().isEmpty()
-                    || toParts[0].trim().isEmpty() || toParts[1].trim().isEmpty()) {
-                throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
-            }
-            return new Command(CommandType.ADD, new Event(fromParts[0].trim(),
-                    parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1, null);
-        }
-        throw new BobbyException("I don't understand what you said. Please use the correct commands");
     }
 
     /**
-     * Returns whether the input is exactly a command word or begins with that word followed by text.
+     * Extracts the first space-delimited word from a command.
      */
-    private static boolean isCommand(String input, String commandWord) {
-        return input.equals(commandWord) || input.startsWith(commandWord + " ");
+    private static String getCommandWord(String command) {
+        int separatorIndex = command.indexOf(' ');
+        return separatorIndex < 0 ? command : command.substring(0, separatorIndex);
+    }
+
+    /**
+     * Parses a list command that must not contain arguments.
+     */
+    private static Command parseListCommand(String command) throws BobbyException {
+        if (!command.equalsIgnoreCase(LIST_COMMAND)) {
+            throw new BobbyException(UNKNOWN_COMMAND_MESSAGE);
+        }
+        return new Command(CommandType.LIST, null, -1, null);
+    }
+
+    /**
+     * Parses a find command and its required keyword.
+     */
+    private static Command parseFindCommand(String command) throws BobbyException {
+        String keyword = getCommandArgument(command, FIND_COMMAND);
+        if (keyword.isEmpty()) {
+            throw new BobbyException("Please provide a keyword to search for.");
+        }
+        return new Command(CommandType.FIND, null, -1, keyword);
+    }
+
+    /**
+     * Parses a mark, unmark, or delete command and its task number.
+     */
+    private static Command parseTaskIndexCommand(CommandType type, String command, String commandWord,
+            int taskCount) throws BobbyException {
+        String taskNumber = getCommandArgument(command, commandWord);
+        return new Command(type, null, getTaskIndex(taskNumber, taskCount), null);
+    }
+
+    /**
+     * Parses a to-do command and its required description.
+     */
+    private static Command parseTodoCommand(String command) throws BobbyException {
+        String description = getCommandArgument(command, ADD_COMMAND);
+        if (description.isEmpty()) {
+            throw new BobbyException("You don't have a task after the todo.");
+        }
+        return new Command(CommandType.ADD, new Todo(description), -1, null);
+    }
+
+    /**
+     * Parses a deadline command and its required description and date-time.
+     */
+    private static Command parseDeadlineCommand(String command) throws BobbyException {
+        String deadlineDetails = getCommandArgument(command, DEADLINE_COMMAND);
+        String[] parts = deadlineDetails.split(" /by ", 2);
+        boolean hasDescription = parts.length == 2 && !parts[0].trim().isEmpty();
+        boolean hasDateTime = parts.length == 2 && !parts[1].trim().isEmpty();
+        if (!hasDescription || !hasDateTime) {
+            throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
+        }
+        return new Command(CommandType.ADD,
+                new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1, null);
+    }
+
+    /**
+     * Parses an event command and its required description, start, and end date-times.
+     */
+    private static Command parseEventCommand(String command) throws BobbyException {
+        String eventDetails = getCommandArgument(command, EVENT_COMMAND);
+        String[] fromParts = eventDetails.split(" /from ", 2);
+        if (fromParts.length < 2) {
+            throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
+        }
+
+        String description = fromParts[0].trim();
+        String[] toParts = fromParts[1].split(" /to ", 2);
+        boolean hasDescription = !description.isEmpty();
+        boolean hasStartAndEnd = toParts.length == 2
+                && !toParts[0].trim().isEmpty()
+                && !toParts[1].trim().isEmpty();
+        if (!hasDescription || !hasStartAndEnd) {
+            throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
+        }
+        return new Command(CommandType.ADD, new Event(description,
+                parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1, null);
+    }
+
+    /**
+     * Returns the trimmed text following a command word.
+     */
+    private static String getCommandArgument(String command, String commandWord) {
+        return command.substring(commandWord.length()).trim();
     }
 
     /**

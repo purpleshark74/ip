@@ -1,6 +1,9 @@
 package bobby.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,13 +33,13 @@ class TaskTest {
     }
 
     /**
-     * Verifies that serialization preserves an empty description.
+     * Verifies that tasks reject missing and blank descriptions.
      */
     @Test
-    void toFileString_emptyDescription_emptyDescriptionRecordReturned() {
-        Task task = new Task("");
-
-        assertEquals("T | 0 | ", task.toFileString());
+    void constructor_invalidDescription_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> new Task(""));
+        assertThrows(AssertionError.class, () -> new Task("   "));
+        assertThrows(AssertionError.class, () -> new Task(null));
     }
 
     /**
@@ -84,5 +87,41 @@ class TaskTest {
         task.markAsDone();
 
         assertEquals("[?][X] read book", task.toString());
+    }
+
+    /**
+     * Verifies that a deadline labels and formats its deadline date and time.
+     */
+    @Test
+    void toString_deadlineTask_formattedDeadlineReturned() {
+        LocalDateTime deadlineDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        Deadline deadline = new Deadline("return book", deadlineDateTime);
+
+        assertEquals("[D][ ] return book (by: Sep 01 2026 2:00 PM)", deadline.toString());
+    }
+
+    /**
+     * Verifies that an event labels and formats its start and end date-times.
+     */
+    @Test
+    void toString_eventTask_formattedStartAndEndReturned() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 1, 16, 0);
+        Event event = new Event("meeting", startDateTime, endDateTime);
+
+        assertEquals("[E][ ] meeting (from: Sep 01 2026 2:00 PM to: Sep 01 2026 4:00 PM)",
+                event.toString());
+    }
+
+    /**
+     * Verifies that date-based tasks reject missing date-time values.
+     */
+    @Test
+    void dateBasedTask_nullDateTime_assertionErrorThrown() {
+        LocalDateTime validDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+
+        assertThrows(AssertionError.class, () -> new Deadline("return book", null));
+        assertThrows(AssertionError.class, () -> new Event("meeting", null, validDateTime));
+        assertThrows(AssertionError.class, () -> new Event("meeting", validDateTime, null));
     }
 }
