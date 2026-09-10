@@ -1,5 +1,6 @@
 package bobby.task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +60,18 @@ public class TaskList {
     public void markAsDone(int index) {
         assert isValidIndex(index) : "Task index must refer to an existing task";
         tasks.get(index).markAsDone();
+    }
+
+    /**
+     * Marks the task at a zero-based index as done at the supplied date and time.
+     *
+     * @param index the zero-based index.
+     * @param completionDateTime the date and time at which the task was completed.
+     */
+    public void markAsDone(int index, LocalDateTime completionDateTime) {
+        assert isValidIndex(index) : "Task index must refer to an existing task";
+        assert completionDateTime != null : "Completion date and time must not be null";
+        tasks.get(index).markAsDone(completionDateTime);
     }
 
     /**
@@ -123,6 +136,33 @@ public class TaskList {
                         .toLowerCase(Locale.ROOT)
                         .contains(lowerCaseKeyword))
                 .toList();
+    }
+
+    /**
+     * Returns the number of currently completed tasks.
+     *
+     * @return the number of completed tasks.
+     */
+    public long countCompletedTasks() {
+        return tasks.stream()
+                .filter(Task::isDone)
+                .count();
+    }
+
+    /**
+     * Returns the number of currently completed tasks completed within a date-time interval.
+     *
+     * @param startDateTime the inclusive start of the interval.
+     * @param endDateTime the exclusive end of the interval.
+     * @return the number of tasks completed within the interval.
+     */
+    public long countTasksCompletedBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        assert startDateTime != null : "Interval start must not be null";
+        assert endDateTime != null : "Interval end must not be null";
+        assert startDateTime.isBefore(endDateTime) : "Interval start must be before its end";
+        return tasks.stream()
+                .filter(task -> task.wasCompletedBetween(startDateTime, endDateTime))
+                .count();
     }
 
     /**

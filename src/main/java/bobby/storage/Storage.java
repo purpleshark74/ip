@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +25,22 @@ public final class Storage {
     private static final int DEADLINE_DATE_TIME_INDEX = 3;
     private static final int EVENT_START_DATE_TIME_INDEX = 3;
     private static final int EVENT_END_DATE_TIME_INDEX = 4;
-    private static final int TODO_FIELD_COUNT = 3;
-    private static final int DEADLINE_FIELD_COUNT = 4;
-    private static final int EVENT_FIELD_COUNT = 5;
+    private static final int LEGACY_TODO_FIELD_COUNT = 3;
+    private static final int LEGACY_DEADLINE_FIELD_COUNT = 4;
+    private static final int LEGACY_EVENT_FIELD_COUNT = 5;
+    private static final int TODO_FIELD_COUNT = 4;
+    private static final int DEADLINE_FIELD_COUNT = 5;
+    private static final int EVENT_FIELD_COUNT = 6;
     private static final String TODO_TYPE = "T";
     private static final String DEADLINE_TYPE = "D";
     private static final String EVENT_TYPE = "E";
     private static final String INCOMPLETE_STATUS = "0";
     private static final String COMPLETE_STATUS = "1";
+    private static final String UNKNOWN_COMPLETION_DATE_TIME = "-";
     private static final Path SAVE_FILE = Path.of("data", "bobby.txt");
+    private static final DateTimeFormatter COMPLETION_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")
+                    .withResolverStyle(ResolverStyle.STRICT);
 
     private Storage() {
     }
@@ -78,7 +87,8 @@ public final class Storage {
         validateCommonFields(fields);
 
         Task task = createTask(fields);
-        applyCompletionStatus(task, fields[TASK_STATUS_INDEX]);
+        applyCompletionStatus(task, fields[TASK_STATUS_INDEX],
+                getCompletionDateTimeValue(fields));
         return task;
     }
 
@@ -97,7 +107,7 @@ public final class Storage {
      * Validates the fields shared by every saved task type.
      */
     private static void validateCommonFields(String[] fields) throws IOException {
-        boolean hasRequiredFields = fields.length >= TODO_FIELD_COUNT;
+        boolean hasRequiredFields = fields.length >= LEGACY_TODO_FIELD_COUNT;
         boolean hasTaskType = hasRequiredFields && !fields[TASK_TYPE_INDEX].isEmpty();
         boolean hasTaskStatus = hasRequiredFields && !fields[TASK_STATUS_INDEX].isEmpty();
         boolean hasDescription = hasRequiredFields && !fields[TASK_DESCRIPTION_INDEX].isEmpty();
@@ -126,7 +136,7 @@ public final class Storage {
      * Creates a to-do from a record with the required number of fields.
      */
     private static Todo createTodo(String[] fields) throws IOException {
-        if (fields.length != TODO_FIELD_COUNT) {
+        if (!hasSupportedFieldCount(fields, LEGACY_TODO_FIELD_COUNT, TODO_FIELD_COUNT)) {
             throw new IOException("Invalid to-do data.");
         }
         return new Todo(fields[TASK_DESCRIPTION_INDEX]);
@@ -136,7 +146,8 @@ public final class Storage {
      * Creates a deadline from a record with a valid deadline field.
      */
     private static Deadline createDeadline(String[] fields) throws IOException {
-        boolean hasDeadline = fields.length == DEADLINE_FIELD_COUNT
+        boolean hasDeadline = hasSupportedFieldCount(
+                fields, LEGACY_DEADLINE_FIELD_COUNT, DEADLINE_FIELD_COUNT)
                 && !fields[DEADLINE_DATE_TIME_INDEX].isEmpty();
         if (!hasDeadline) {
             throw new IOException("Invalid deadline data.");
@@ -149,7 +160,8 @@ public final class Storage {
      * Creates an event from a record with valid start and end fields.
      */
     private static Event createEvent(String[] fields) throws IOException {
-        boolean hasStartAndEnd = fields.length == EVENT_FIELD_COUNT
+        boolean hasStartAndEnd = hasSupportedFieldCount(
+                fields, LEGACY_EVENT_FIELD_COUNT, EVENT_FIELD_COUNT)
                 && !fields[EVENT_START_DATE_TIME_INDEX].isEmpty()
                 && !fields[EVENT_END_DATE_TIME_INDEX].isEmpty();
         if (!hasStartAndEnd) {
@@ -163,12 +175,22 @@ public final class Storage {
     /**
      * Restores a task's saved completion status.
      */
-    private static void applyCompletionStatus(Task task, String status) throws IOException {
+    private static void applyCompletionStatus(Task task, String status,
+            String completionDateTimeValue) throws IOException {
         switch (status) {
             case COMPLETE_STATUS:
-                task.markAsDone();
+                if (completionDateTimeValue == null
+                        || completionDateTimeValue.equals(UNKNOWN_COMPLETION_DATE_TIME)) {
+                    task.markAsDone();
+                } else {
+                    task.markAsDone(parseCompletionDateTime(completionDateTimeValue));
+                }
                 break;
             case INCOMPLETE_STATUS:
+                if (completionDateTimeValue != null
+                        && !completionDateTimeValue.equals(UNKNOWN_COMPLETION_DATE_TIME)) {
+                    throw new IOException("Incomplete task has a completion date and time.");
+                }
                 break;
             default:
                 throw new IOException("Invalid task status.");
@@ -183,6 +205,41 @@ public final class Storage {
             return LocalDateTime.parse(dateTime);
         } catch (DateTimeParseException e) {
             throw new IOException("Invalid date data.", e);
+        }
+    }
+
+    /**
+     * Returns whether a record contains either the legacy or current number of fields.
+     */
+    private static boolean hasSupportedFieldCount(String[] fields, int legacyFieldCount,
+            int fieldCount) {
+        return fields.length == legacyFieldCount || fields.length == fieldCount;
+    }
+
+    /**
+     * Returns the stored completion value, or {@code null} for a legacy record.
+     */
+    private static String getCompletionDateTimeValue(String[] fields) throws IOException {
+        switch (fields[TASK_TYPE_INDEX]) {
+            case TODO_TYPE:
+                return fields.length == TODO_FIELD_COUNT ? fields[fields.length - 1] : null;
+            case DEADLINE_TYPE:
+                return fields.length == DEADLINE_FIELD_COUNT ? fields[fields.length - 1] : null;
+            case EVENT_TYPE:
+                return fields.length == EVENT_FIELD_COUNT ? fields[fields.length - 1] : null;
+            default:
+                throw new IOException("Unknown task type.");
+        }
+    }
+
+    /**
+     * Parses a completion date and time saved in Bobby's fixed on-disk format.
+     */
+    private static LocalDateTime parseCompletionDateTime(String dateTime) throws IOException {
+        try {
+            return LocalDateTime.parse(dateTime, COMPLETION_DATE_TIME_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new IOException("Invalid completion date data.", e);
         }
     }
 }

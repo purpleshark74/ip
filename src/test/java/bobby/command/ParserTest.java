@@ -45,6 +45,29 @@ class ParserTest {
     }
 
     /**
+     * Verifies that a statistics command does not carry task data.
+     */
+    @Test
+    void parse_statsCommand_statsCommandReturned() throws BobbyException {
+        Parser.Command command = Parser.parse(" STATS ", 3);
+
+        assertEquals(Parser.CommandType.STATS, command.getType());
+        assertNull(command.getTask());
+        assertEquals(-1, command.getTaskIndex());
+    }
+
+    /**
+     * Verifies that a statistics command rejects arguments with a specific usage message.
+     */
+    @Test
+    void parse_statsCommandWithArguments_exceptionThrown() {
+        BobbyException exception = assertThrows(BobbyException.class, () ->
+                Parser.parse("stats week", 3));
+
+        assertEquals("Please use: stats", exception.getMessage());
+    }
+
+    /**
      * Verifies that a find command returns its trimmed keyword without task data.
      */
     @Test
@@ -79,7 +102,7 @@ class ParserTest {
 
         assertEquals(Parser.CommandType.ADD, command.getType());
         Deadline task = assertInstanceOf(Deadline.class, command.getTask());
-        assertEquals("D | 0 | return book | 2026-09-01T14:00", task.toFileString());
+        assertEquals("D | 0 | return book | 2026-09-01T14:00 | -", task.toFileString());
     }
 
     /**
@@ -92,7 +115,7 @@ class ParserTest {
 
         assertEquals(Parser.CommandType.ADD, command.getType());
         Event task = assertInstanceOf(Event.class, command.getTask());
-        assertEquals("E | 0 | project meeting | 2026-09-01T14:00 | 2026-09-01T16:00",
+        assertEquals("E | 0 | project meeting | 2026-09-01T14:00 | 2026-09-01T16:00 | -",
                 task.toFileString());
     }
 
@@ -166,6 +189,7 @@ class ParserTest {
     @Test
     void parse_unknownCommand_exceptionThrown() {
         assertUnknownCommand("remind me");
+        assertUnknownCommand("statistics");
         assertUnknownCommand("todoing read book");
         assertUnknownCommand("list extra");
     }

@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +19,9 @@ import bobby.task.Todo;
  * Tests Bobby's command responses independently of either user interface.
  */
 class BobbyTest {
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+            Instant.parse("2026-09-10T04:00:00Z"), ZoneId.of("Asia/Singapore"));
+
     /**
      * Verifies that listing tasks returns their numbered display forms.
      */
@@ -44,6 +51,49 @@ class BobbyTest {
 
         assertEquals("Here are the matching tasks in your list:\n"
                 + "     1.[T][ ] Read book", response);
+    }
+
+    /**
+     * Verifies that statistics use the current calendar week and current task states.
+     */
+    @Test
+    void getResponse_statsCommand_currentTaskStatisticsReturned() {
+        Todo completedThisWeek = new Todo("read book");
+        completedThisWeek.markAsDone(LocalDateTime.of(2026, 9, 7, 0, 0));
+        Todo completedBeforeThisWeek = new Todo("submit essay");
+        completedBeforeThisWeek.markAsDone(LocalDateTime.of(2026, 9, 6, 23, 59, 59));
+        Todo completedAtUnknownTime = new Todo("legacy task");
+        completedAtUnknownTime.markAsDone();
+        Todo pendingTask = new Todo("buy groceries");
+        Bobby bobby = new Bobby(new TaskList(List.of(
+                completedThisWeek, completedBeforeThisWeek, completedAtUnknownTime, pendingTask)),
+                FIXED_CLOCK);
+
+        String response = bobby.getResponse("stats");
+
+        assertEquals("Here are your task statistics:\n"
+                + "     Period: Sep 07 2026 to Sep 13 2026\n"
+                + "     Currently completed this week: 1\n"
+                + "     Completed overall: 3\n"
+                + "     Pending: 1\n"
+                + "     Total: 4", response);
+    }
+
+    /**
+     * Verifies that statistics for an empty task list contain zero-valued counts.
+     */
+    @Test
+    void getResponse_statsCommandWithEmptyList_zeroStatisticsReturned() {
+        Bobby bobby = new Bobby(new TaskList(), FIXED_CLOCK);
+
+        String response = bobby.getResponse("stats");
+
+        assertEquals("Here are your task statistics:\n"
+                + "     Period: Sep 07 2026 to Sep 13 2026\n"
+                + "     Currently completed this week: 0\n"
+                + "     Completed overall: 0\n"
+                + "     Pending: 0\n"
+                + "     Total: 0", response);
     }
 
     /**

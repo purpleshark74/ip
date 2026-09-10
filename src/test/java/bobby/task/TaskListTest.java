@@ -3,7 +3,7 @@ package bobby.task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -88,5 +88,34 @@ class TaskListTest {
         List<Task> matchingTasks = taskList.findTasksContaining("exercise");
 
         assertEquals(List.of(), matchingTasks);
+    }
+
+    /**
+     * Verifies that completion counts use current state and a half-open date-time interval.
+     */
+    @Test
+    void completionCounts_variedCompletionStates_expectedCountsReturned() {
+        LocalDateTime weekStart = LocalDateTime.of(2026, 9, 7, 0, 0);
+        LocalDateTime nextWeekStart = LocalDateTime.of(2026, 9, 14, 0, 0);
+        Task completedAtStart = new Todo("start boundary");
+        completedAtStart.markAsDone(weekStart);
+        Task completedBeforeEnd = new Todo("before end boundary");
+        completedBeforeEnd.markAsDone(nextWeekStart.minusSeconds(1));
+        Task completedAtEnd = new Todo("end boundary");
+        completedAtEnd.markAsDone(nextWeekStart);
+        Task completedAtUnknownTime = new Todo("legacy task");
+        completedAtUnknownTime.markAsDone();
+        Task pendingTask = new Todo("pending task");
+        TaskList taskList = new TaskList(List.of(completedAtStart, completedBeforeEnd,
+                completedAtEnd, completedAtUnknownTime, pendingTask));
+
+        assertEquals(4, taskList.countCompletedTasks());
+        assertEquals(2, taskList.countTasksCompletedBetween(weekStart, nextWeekStart));
+
+        taskList.markAsNotDone(0);
+        taskList.remove(1);
+
+        assertEquals(2, taskList.countCompletedTasks());
+        assertEquals(0, taskList.countTasksCompletedBetween(weekStart, nextWeekStart));
     }
 }
