@@ -3,6 +3,7 @@ package bobby.task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -75,5 +76,48 @@ class TaskListTest {
 
         assertEquals(List.of(firstTask, secondTask), matchingTasks);
         assertThrows(UnsupportedOperationException.class, () -> matchingTasks.add(thirdTask));
+    }
+
+    /**
+     * Verifies that task lists reject null collection references and null task elements.
+     */
+    @Test
+    void constructor_invalidInitialTasks_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> new TaskList(null));
+        assertThrows(AssertionError.class, () -> new TaskList(Arrays.asList((Task) null)));
+    }
+
+    /**
+     * Verifies that null cannot be added to a task list.
+     */
+    @Test
+    void add_nullTask_assertionErrorThrown() {
+        TaskList taskList = new TaskList();
+
+        assertThrows(AssertionError.class, () -> taskList.add(null));
+    }
+
+    /**
+     * Verifies that task-list operations reject indices outside the current list bounds.
+     */
+    @Test
+    void indexedOperations_invalidIndices_assertionErrorThrown() {
+        TaskList taskList = new TaskList(List.of(new Todo("only task")));
+
+        assertThrows(AssertionError.class, () -> taskList.get(-1));
+        assertThrows(AssertionError.class, () -> taskList.markAsDone(1));
+        assertThrows(AssertionError.class, () -> taskList.markAsNotDone(1));
+        assertThrows(AssertionError.class, () -> taskList.remove(1));
+    }
+
+    /**
+     * Verifies that searches reject absent and blank keywords supplied by programmer error.
+     */
+    @Test
+    void findTasksContaining_invalidKeyword_assertionErrorThrown() {
+        TaskList taskList = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> taskList.findTasksContaining(null));
+        assertThrows(AssertionError.class, () -> taskList.findTasksContaining("   "));
     }
 }

@@ -46,10 +46,31 @@ public class Parser {
          * @param keyword the search keyword, or {@code null} when not applicable
          */
         private Command(CommandType type, Task task, int taskIndex, String keyword) {
+            assert type != null : "Command type must not be null";
+            assert (type == CommandType.ADD) == (task != null)
+                    : "Only an add command must carry a task";
+            assert (isTaskIndexCommand(type) ? taskIndex >= 0 : taskIndex == -1)
+                    : "Only a task-index command must carry a valid task index";
+            assert (type == CommandType.FIND
+                    ? keyword != null && !keyword.isBlank()
+                    : keyword == null)
+                    : "Only a find command must carry a non-blank keyword";
             this.type = type;
             this.task = task;
             this.taskIndex = taskIndex;
             this.keyword = keyword;
+        }
+
+        /**
+         * Returns whether a command type operates on an existing task by index.
+         *
+         * @param type the command type to inspect
+         * @return {@code true} for mark, unmark, and delete commands
+         */
+        private static boolean isTaskIndexCommand(CommandType type) {
+            return type == CommandType.MARK
+                    || type == CommandType.UNMARK
+                    || type == CommandType.DELETE;
         }
 
         /**
@@ -108,6 +129,8 @@ public class Parser {
      * @throws BobbyException if the command is malformed or has an invalid task number
      */
     public static Command parse(String input, int taskCount) throws BobbyException {
+        assert input != null : "Command input must not be null";
+        assert taskCount >= 0 : "Task count must not be negative";
         String command = input.trim();
         String lowerCaseCommand = command.toLowerCase();
         if (command.equalsIgnoreCase("list")) {

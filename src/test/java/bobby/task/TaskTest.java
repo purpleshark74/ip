@@ -1,6 +1,9 @@
 package bobby.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,13 +33,13 @@ class TaskTest {
     }
 
     /**
-     * Verifies that serialization preserves an empty description.
+     * Verifies that tasks reject missing and blank descriptions.
      */
     @Test
-    void toFileString_emptyDescription_emptyDescriptionRecordReturned() {
-        Task task = new Task("");
-
-        assertEquals("T | 0 | ", task.toFileString());
+    void constructor_invalidDescription_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> new Task(""));
+        assertThrows(AssertionError.class, () -> new Task("   "));
+        assertThrows(AssertionError.class, () -> new Task(null));
     }
 
     /**
@@ -84,5 +87,17 @@ class TaskTest {
         task.markAsDone();
 
         assertEquals("[?][X] read book", task.toString());
+    }
+
+    /**
+     * Verifies that date-based tasks reject missing date-time values.
+     */
+    @Test
+    void dateBasedTask_nullDateTime_assertionErrorThrown() {
+        LocalDateTime dateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+
+        assertThrows(AssertionError.class, () -> new Deadline("return book", null));
+        assertThrows(AssertionError.class, () -> new Event("meeting", null, dateTime));
+        assertThrows(AssertionError.class, () -> new Event("meeting", dateTime, null));
     }
 }
