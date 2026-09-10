@@ -13,22 +13,22 @@ public class Event extends Task {
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a", Locale.ENGLISH);
 
-    private final LocalDateTime from;
-    private final LocalDateTime to;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
 
     /**
      * Creates an event task.
      *
      * @param description the event description
-     * @param from the start date and time
-     * @param to the end date and time
+     * @param startDateTime the start date and time
+     * @param endDateTime the end date and time
      */
-    public Event(String description, LocalDateTime from, LocalDateTime to) {
+    public Event(String description, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         super(description);
-        assert from != null : "Event start date and time must not be null";
-        assert to != null : "Event end date and time must not be null";
-        this.from = from;
-        this.to = to;
+        assert startDateTime != null : "Event start date and time must not be null";
+        assert endDateTime != null : "Event end date and time must not be null";
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
     /**
@@ -38,7 +38,8 @@ public class Event extends Task {
      */
     @Override
     public String toFileString() {
-        return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from + " | " + to;
+        return "E | " + (isDone ? "1" : "0") + " | " + description
+                + " | " + startDateTime + " | " + endDateTime;
     }
 
     /**
@@ -49,7 +50,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + description
-                + " (from: " + from.format(DISPLAY_DATE_FORMAT)
-                + " to: " + to.format(DISPLAY_DATE_FORMAT) + ")";
+                + " (from: " + startDateTime.format(DISPLAY_DATE_FORMAT)
+                + " to: " + endDateTime.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }
