@@ -1,0 +1,144 @@
+.app-root {
+    -fx-background-color: #f4f6fa;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-font-size: 13px;
+}
+
+.app-header {
+    -fx-background-color: #17233c;
+    -fx-padding: 8 16 7 16;
+}
+
+.app-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+}
+
+.app-subtitle {
+    -fx-font-size: 9px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #aab9d6;
+}
+
+.conversation-scroll,
+.conversation-scroll > .viewport {
+    -fx-background-color: #f4f6fa;
+}
+
+.conversation-scroll {
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.dialog-container {
+    -fx-padding: 12 12 14 12;
+    -fx-spacing: 3;
+}
+
+.dialog-row {
+    -fx-padding: 4 0 4 0;
+}
+
+.speaker-label {
+    -fx-font-size: 9px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #68738a;
+}
+
+.bobby-avatar {
+    -fx-effect: dropshadow(gaussian, rgba(24, 35, 60, 0.15), 5, 0.2, 0, 1);
+}
+
+.bobby-message {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 3 12 12 12;
+    -fx-border-color: #e4e8f0;
+    -fx-border-radius: 3 12 12 12;
+    -fx-border-width: 1;
+    -fx-padding: 9 11 9 11;
+    -fx-text-fill: #263247;
+}
+
+.user-message {
+    -fx-background-color: #315efb;
+    -fx-background-radius: 13 13 3 13;
+    -fx-padding: 8 11 8 11;
+    -fx-text-fill: #ffffff;
+}
+
+.error-row .speaker-label {
+    -fx-text-fill: #b42335;
+}
+
+.error-message {
+    -fx-background-color: #fff1f2;
+    -fx-background-radius: 3 12 12 12;
+    -fx-border-color: #f3a6af;
+    -fx-border-radius: 3 12 12 12;
+    -fx-border-width: 1 1 1 3;
+    -fx-padding: 9 11 9 11;
+    -fx-text-fill: #8f1d2c;
+}
+
+.composer {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dfe4ed transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 9 10 10 10;
+}
+
+.command-input {
+    -fx-background-color: #f7f8fb;
+    -fx-background-radius: 9;
+    -fx-border-color: #d7ddea;
+    -fx-border-radius: 9;
+    -fx-border-width: 1;
+    -fx-padding: 9 11 9 11;
+    -fx-prompt-text-fill: #8a94a7;
+    -fx-text-fill: #202b3c;
+}
+
+.command-input:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #315efb;
+}
+
+.send-button {
+    -fx-background-color: #315efb;
+    -fx-background-radius: 9;
+    -fx-cursor: hand;
+    -fx-font-weight: 700;
+    -fx-padding: 9 16 9 16;
+    -fx-text-fill: #ffffff;
+}
+
+.send-button:hover {
+    -fx-background-color: #244dd6;
+}
+
+.send-button:pressed {
+    -fx-background-color: #1d3fae;
+}
+
+.send-button:disabled {
+    -fx-background-color: #c9d0dc;
+    -fx-opacity: 1;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 9;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #bcc5d5;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}

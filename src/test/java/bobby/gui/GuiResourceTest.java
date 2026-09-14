@@ -25,11 +25,18 @@ class GuiResourceTest {
     }
 
     /**
-     * Verifies that both profile images are packaged as resources.
+     * Verifies that the GUI theme is packaged as a resource.
      */
     @Test
-    void profileImages_applicationResources_resourcesFound() {
-        assertNotNull(MainWindow.class.getResource("/images/User_Icon.png"));
+    void themeStylesheet_applicationResources_resourceFound() {
+        assertNotNull(Main.class.getResource("/view/BobbyTheme.css"));
+    }
+
+    /**
+     * Verifies that Bobby's profile image is packaged as a resource.
+     */
+    @Test
+    void bobbyProfileImage_applicationResources_resourceFound() {
         assertNotNull(MainWindow.class.getResource("/images/Bobby_Head.png"));
     }
 }

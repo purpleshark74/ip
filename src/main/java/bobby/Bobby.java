@@ -29,6 +29,43 @@ public class Bobby {
     private final Clock clock;
 
     /**
+     * Describes text returned by Bobby and whether it represents an error.
+     */
+    public static final class CommandResult {
+        private final String message;
+        private final boolean isError;
+
+        /**
+         * Creates a command result for presentation by a user interface.
+         *
+         * @param message the text to display.
+         * @param isError whether the command failed.
+         */
+        private CommandResult(String message, boolean isError) {
+            this.message = message;
+            this.isError = isError;
+        }
+
+        /**
+         * Returns the text to display.
+         *
+         * @return the response text.
+         */
+        public String getMessage() {
+            return message;
+        }
+
+        /**
+         * Returns whether the command failed.
+         *
+         * @return {@code true} when the response describes an error.
+         */
+        public boolean isError() {
+            return isError;
+        }
+    }
+
+    /**
      * Creates a Bobby instance backed by the task list saved on disk.
      */
     public Bobby() {
@@ -102,15 +139,25 @@ public class Bobby {
      * @return Bobby's response for the command.
      */
     public String getResponse(String input) {
+        return getCommandResult(input).getMessage();
+    }
+
+    /**
+     * Executes a user command and returns presentation metadata with Bobby's response.
+     *
+     * @param input the user's raw command.
+     * @return the command result, including whether it represents an error.
+     */
+    public CommandResult getCommandResult(String input) {
         if (isExitCommand(input)) {
-            return "     Bye! Hope to see you again soon.";
+            return new CommandResult("     Bye! Hope to see you again soon.", false);
         }
 
         try {
             Parser.Command command = Parser.parse(input, tasks.size());
-            return execute(command);
+            return new CommandResult(execute(command), false);
         } catch (BobbyException e) {
-            return "     " + e.getMessage();
+            return new CommandResult("     " + e.getMessage(), true);
         }
     }
 

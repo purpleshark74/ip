@@ -15,8 +15,10 @@ import javafx.stage.Stage;
  * Displays Bobby's JavaFX graphical user interface from its FXML view.
  */
 public class Main extends Application {
-    private static final double WINDOW_WIDTH = 400.0;
-    private static final double WINDOW_HEIGHT = 600.0;
+    private static final double WINDOW_WIDTH = 440.0;
+    private static final double WINDOW_HEIGHT = 640.0;
+    private static final double MINIMUM_WINDOW_WIDTH = 360.0;
+    private static final double MINIMUM_WINDOW_HEIGHT = 480.0;
 
     private final Bobby bobby = new Bobby();
 
@@ -34,9 +36,11 @@ public class Main extends Application {
 
             stage.setScene(new Scene(mainLayout));
             stage.setTitle("Bobby");
-            stage.setResizable(false);
-            stage.setMinHeight(WINDOW_HEIGHT);
-            stage.setMinWidth(WINDOW_WIDTH);
+            stage.setWidth(WINDOW_WIDTH);
+            stage.setHeight(WINDOW_HEIGHT);
+            stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+            stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+            stage.setResizable(true);
             stage.show();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load Bobby's main window.", e);
