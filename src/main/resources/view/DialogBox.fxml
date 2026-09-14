@@ -4,29 +4,37 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<fx:root alignment="TOP_RIGHT"
+<fx:root alignment="TOP_LEFT"
          maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"
-         prefWidth="400.0"
+         spacing="9.0"
+         styleClass="dialog-row"
          type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label fx:id="dialog"
-               minHeight="-Infinity"
-               text="Label"
-               wrapText="true" />
         <ImageView fx:id="displayPicture"
-                   fitHeight="75.0"
-                   fitWidth="75.0"
+                   fitHeight="34.0"
+                   fitWidth="34.0"
                    pickOnBounds="true"
-                   preserveRatio="true" />
+                   preserveRatio="true"
+                   styleClass="bobby-avatar" />
+        <VBox fx:id="messageContainer"
+              alignment="TOP_LEFT"
+              spacing="4.0"
+              HBox.hgrow="ALWAYS">
+            <children>
+                <Label fx:id="speakerLabel"
+                       styleClass="speaker-label"
+                       text="BOBBY" />
+                <Label fx:id="dialog"
+                       maxWidth="1.7976931348623157E308"
+                       minHeight="-Infinity"
+                       text="Label"
+                       wrapText="true" />
+            </children>
+        </VBox>
     </children>
-    <padding>
-        <Insets bottom="15.0"
-                left="5.0"
-                right="5.0"
-                top="15.0" />
-    </padding>
 </fx:root>

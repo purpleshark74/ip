@@ -2,22 +2,19 @@ package bobby.gui;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Objects;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
- * Displays a chat message beside its speaker's profile image.
+ * Displays a user command or a response from Bobby.
  */
 public class DialogBox extends HBox {
     @FXML
@@ -26,11 +23,17 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
+    @FXML
+    private Label speakerLabel;
+
+    @FXML
+    private VBox messageContainer;
+
     /**
      * Creates a dialog box backed by its FXML view.
      *
      * @param message the message to display.
-     * @param image the speaker's profile image.
+     * @param image Bobby's profile image, or {@code null} for a user message.
      */
     private DialogBox(String message, Image image) {
         URL dialogBoxView = Objects.requireNonNull(
@@ -46,7 +49,7 @@ public class DialogBox extends HBox {
             throw new IllegalStateException("Unable to load a dialog box.", e);
         }
 
-        dialog.setText(message);
+        dialog.setText(formatForDisplay(message));
         displayPicture.setImage(image);
     }
 
@@ -54,11 +57,12 @@ public class DialogBox extends HBox {
      * Creates a right-aligned dialog box for a user message.
      *
      * @param message the user's message.
-     * @param image the user's profile image.
      * @return the user dialog box.
      */
-    public static DialogBox getUserDialog(String message, Image image) {
-        return new DialogBox(message, image);
+    public static DialogBox getUserDialog(String message) {
+        DialogBox dialogBox = new DialogBox(message, null);
+        dialogBox.configureAsUserDialog();
+        return dialogBox;
     }
 
     /**
@@ -66,21 +70,40 @@ public class DialogBox extends HBox {
      *
      * @param message Bobby's response.
      * @param image Bobby's profile image.
+     * @param isError whether the response describes an invalid command.
      * @return the Bobby dialog box.
      */
-    public static DialogBox getBobbyDialog(String message, Image image) {
+    public static DialogBox getBobbyDialog(String message, Image image, boolean isError) {
         DialogBox dialogBox = new DialogBox(message, image);
-        dialogBox.flip();
+        dialogBox.dialog.getStyleClass().add(isError ? "error-message" : "bobby-message");
+        if (isError) {
+            dialogBox.getStyleClass().add("error-row");
+            dialogBox.speakerLabel.setText("BOBBY  ·  COMMAND ERROR");
+        }
         return dialogBox;
     }
 
     /**
-     * Moves the profile image to the left and aligns the dialog box there.
+     * Configures the compact, right-aligned appearance used for user commands.
      */
-    private void flip() {
-        ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
-        Collections.reverse(children);
-        getChildren().setAll(children);
-        setAlignment(Pos.TOP_LEFT);
+    private void configureAsUserDialog() {
+        setAlignment(Pos.TOP_RIGHT);
+        displayPicture.setManaged(false);
+        displayPicture.setVisible(false);
+        speakerLabel.setManaged(false);
+        speakerLabel.setVisible(false);
+        messageContainer.setAlignment(Pos.TOP_RIGHT);
+        dialog.getStyleClass().add("user-message");
+        dialog.maxWidthProperty().bind(widthProperty().multiply(0.78));
+    }
+
+    /**
+     * Removes console-only leading indentation while preserving meaningful line breaks.
+     *
+     * @param message the response formatted for the console.
+     * @return the response formatted for the graphical interface.
+     */
+    private static String formatForDisplay(String message) {
+        return message.replaceAll("(?m)^ {5}", "");
     }
 }

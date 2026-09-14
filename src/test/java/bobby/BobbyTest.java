@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import bobby.Bobby.CommandResult;
 import bobby.task.TaskList;
 import bobby.task.Todo;
 
@@ -106,6 +107,22 @@ class BobbyTest {
         String response = bobby.getResponse("unknown");
 
         assertEquals("     I don't understand what you said. Please use the correct commands", response);
+    }
+
+    /**
+     * Verifies that GUI clients can distinguish command errors from successful replies.
+     */
+    @Test
+    void getCommandResult_invalidAndValidCommands_errorStateReturned() {
+        Bobby bobby = new Bobby(new TaskList());
+
+        CommandResult invalidResult = bobby.getCommandResult("unknown");
+        CommandResult validResult = bobby.getCommandResult("list");
+
+        assertTrue(invalidResult.isError());
+        assertFalse(validResult.isError());
+        assertEquals("     I don't understand what you said. Please use the correct commands",
+                invalidResult.getMessage());
     }
 
     /**

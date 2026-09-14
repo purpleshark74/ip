@@ -4,8 +4,11 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import bobby.Bobby;
+import bobby.Bobby.CommandResult;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -16,7 +19,6 @@ import javafx.scene.layout.VBox;
  * Controls Bobby's main chat window.
  */
 public class MainWindow extends AnchorPane {
-    private final Image userImage = loadImage("/images/User_Icon.png");
     private final Image bobbyImage = loadImage("/images/Bobby_Head.png");
 
     @FXML
@@ -28,6 +30,9 @@ public class MainWindow extends AnchorPane {
     @FXML
     private TextField userInput;
 
+    @FXML
+    private Button sendButton;
+
     private Bobby bobby;
 
     /**
@@ -37,6 +42,13 @@ public class MainWindow extends AnchorPane {
     private void initialize() {
         dialogContainer.heightProperty().addListener(
                 observable -> scrollPane.setVvalue(1.0));
+        sendButton.disableProperty().bind(Bindings.createBooleanBinding(() ->
+                userInput.getText().isBlank(), userInput.textProperty()));
+        dialogContainer.getChildren().add(
+                DialogBox.getBobbyDialog(
+                        "Hi, I'm Bobby. Tell me what you need to remember, or type list to see your tasks.",
+                        bobbyImage, false));
+        Platform.runLater(userInput::requestFocus);
     }
 
     /**
@@ -53,12 +65,16 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     private void handleUserInput() {
-        String userText = userInput.getText();
-        String bobbyText = bobby.getResponse(userText);
+        String userText = userInput.getText().trim();
+        if (userText.isEmpty()) {
+            return;
+        }
+
+        CommandResult result = bobby.getCommandResult(userText);
         boolean shouldExit = bobby.isExitCommand(userText);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(userText, userImage),
-                DialogBox.getBobbyDialog(bobbyText, bobbyImage));
+                DialogBox.getUserDialog(userText),
+                DialogBox.getBobbyDialog(result.getMessage(), bobbyImage, result.isError()));
         userInput.clear();
         if (shouldExit) {
             Platform.exit();
