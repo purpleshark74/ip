@@ -88,8 +88,8 @@ class StorageTest {
         Storage.save(tasks);
 
         assertEquals("[T][X] read book", tasks.get(0).toString());
-        assertEquals("[D][ ] return book (by: Sep 12 2026 6:00 PM)", tasks.get(1).toString());
-        assertEquals("[E][X] meeting (from: Sep 11 2026 2:00 PM to: Sep 11 2026 4:00 PM)",
+        assertEquals("[D][ ] return book (appointed for: Sep 12 2026 6:00 PM)", tasks.get(1).toString());
+        assertEquals("[E][X] meeting (commencing: Sep 11 2026 2:00 PM; concluding: Sep 11 2026 4:00 PM)",
                 tasks.get(2).toString());
         assertEquals(List.of(
                 "T | 1 | read book | -",

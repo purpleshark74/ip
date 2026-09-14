@@ -29,8 +29,8 @@ public class Ui {
         System.out.println(LINE);
         System.out.println(BANNER);
         System.out.println(LINE);
-        System.out.println("     Hello, I'm Bobby.");
-        System.out.println("     What can I do for you?");
+        System.out.println("     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.");
+        System.out.println("     What charge wouldst thou have me enter, amend, or proclaim?");
         System.out.println(LINE);
     }
 
@@ -73,7 +73,8 @@ public class Ui {
      */
     public void showLoadingError() {
         showLine();
-        System.out.println("     Unable to load tasks from disk. Starting with an empty list.");
+        System.out.println("     Regrettably, the saved register could not be read.");
+        System.out.println("     I shall therefore commence with an empty register.");
         showLine();
     }
 
@@ -82,7 +83,7 @@ public class Ui {
      */
     public void showGoodbye() {
         showLine();
-        System.out.println("     Bye! Hope to see you again soon.");
+        System.out.println("     I humbly take my leave. May good fortune attend thee until next we meet.");
         showLine();
     }
 }

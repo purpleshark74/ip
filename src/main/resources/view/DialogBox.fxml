@@ -28,7 +28,7 @@
             <children>
                 <Label fx:id="speakerLabel"
                        styleClass="speaker-label"
-                       text="BOBBY" />
+                       text="LORD BOBBY" />
                 <Label fx:id="dialog"
                        maxWidth="1.7976931348623157E308"
                        minHeight="-Infinity"

@@ -45,7 +45,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D][" + getStatusIcon() + "] " + description + " (by: "
+        return "[D][" + getStatusIcon() + "] " + description + " (appointed for: "
                 + deadlineDateTime.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }

@@ -48,52 +48,52 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     You don't have a task after the todo.
+     Thy decree containeth no duty to inscribe. Pray use: todo DESCRIPTION.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
-     I don't understand what you said. Please use the correct commands
+     Prithee, forgive this humble steward, for thy decree exceedeth my understanding. I beseech thee, employ one of the appointed commands.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
+     Most excellent. I have proclaimed this duty duly accomplished:
        [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     As thou commandest. I have restored this duty to the ranks of unfinished business:
        [T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -129,33 +129,33 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Please use dates and times in YYYY-MM-DD HHMM format.
+     The appointed date and hour are not in an acceptable form. Pray employ YYYY-MM-DD HHMM.
 ____________________________________________________________
 ____________________________________________________________
-     Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM
+     Thy decree must take precisely this form: deadline DESCRIPTION /by YYYY-MM-DD HHMM.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-No tasks added yet.
+Behold, the full register of thy appointed duties:
+The royal register standeth presently unburdened; no duty hath yet been inscribed.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [E][ ] meeting (from: Oct 15 2019 9:00 AM to: Oct 15 2019 10:00 AM)
-     Now you have 1 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [E][ ] meeting (commencing: Oct 15 2019 9:00 AM; concluding: Oct 15 2019 10:00 AM)
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM
+     Thy decree must take precisely this form: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-     1.[E][ ] meeting (from: Oct 15 2019 9:00 AM to: Oct 15 2019 10:00 AM)
+Behold, the full register of thy appointed duties:
+     1.[E][ ] meeting (commencing: Oct 15 2019 9:00 AM; concluding: Oct 15 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -193,47 +193,47 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] Walk dog
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     I don't understand what you said. Please use the correct commands
+     Prithee, forgive this humble steward, for thy decree exceedeth my understanding. I beseech thee, employ one of the appointed commands.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] Walk dog
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [D][ ] pay bills (by: Oct 15 2019 6:00 PM)
-     Now you have 2 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [D][ ] pay bills (appointed for: Oct 15 2019 6:00 PM)
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [E][ ] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
-     Now you have 3 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [E][ ] project (commencing: Oct 16 2019 9:00 AM; concluding: Oct 16 2019 10:00 AM)
+     There now stand 3 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     As thou commandest. I have restored this duty to the ranks of unfinished business:
        [T][ ] Walk dog
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
-       [E][X] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
+     Most excellent. I have proclaimed this duty duly accomplished:
+       [E][X] project (commencing: Oct 16 2019 9:00 AM; concluding: Oct 16 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] Walk dog
-     2.[D][ ] pay bills (by: Oct 15 2019 6:00 PM)
-     3.[E][X] project (from: Oct 16 2019 9:00 AM to: Oct 16 2019 10:00 AM)
+     2.[D][ ] pay bills (appointed for: Oct 15 2019 6:00 PM)
+     3.[E][X] project (commencing: Oct 16 2019 9:00 AM; concluding: Oct 16 2019 10:00 AM)
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -270,44 +270,44 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [D][ ] return book (by: Jun 06 2019 6:00 PM)
-     Now you have 2 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [D][ ] return book (appointed for: Jun 06 2019 6:00 PM)
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-     Now you have 3 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [E][ ] project meeting (commencing: Aug 06 2019 2:00 PM; concluding: Aug 06 2019 4:00 PM)
+     There now stand 3 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
+     Most excellent. I have proclaimed this duty duly accomplished:
        [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
-       [D][X] return book (by: Jun 06 2019 6:00 PM)
+     Most excellent. I have proclaimed this duty duly accomplished:
+       [D][X] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     Noted. I've removed this task:
-       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-     Now you have 2 tasks in the list.
+     It is done. I have struck this duty from the royal register:
+       [E][ ] project meeting (commencing: Aug 06 2019 2:00 PM; concluding: Aug 06 2019 4:00 PM)
+     There now remain 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][X] read book
-     2.[D][X] return book (by: Jun 06 2019 6:00 PM)
+     2.[D][X] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -350,68 +350,68 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] alpha
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] beta
-     Now you have 2 tasks in the list.
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] gamma
-     Now you have 3 tasks in the list.
+     There now stand 3 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Noted. I've removed this task:
+     It is done. I have struck this duty from the royal register:
        [T][ ] beta
-     Now you have 2 tasks in the list.
+     There now remain 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] alpha
      2.[T][ ] gamma
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] alpha
      2.[T][ ] gamma
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] alpha
      2.[T][ ] gamma
 ____________________________________________________________
 ____________________________________________________________
-     Noted. I've removed this task:
+     It is done. I have struck this duty from the royal register:
        [T][ ] gamma
-     Now you have 1 tasks in the list.
+     One duty now remaineth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] alpha
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] alpha
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -452,53 +452,53 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-No tasks added yet.
+Behold, the full register of thy appointed duties:
+The royal register standeth presently unburdened; no duty hath yet been inscribed.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] only task
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] only task
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][ ] only task
 ____________________________________________________________
 ____________________________________________________________
-     Noted. I've removed this task:
+     It is done. I have struck this duty from the royal register:
        [T][ ] only task
-     Now you have 0 tasks in the list.
+     The register now standeth empty.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-No tasks added yet.
+Behold, the full register of thy appointed duties:
+The royal register standeth presently unburdened; no duty hath yet been inscribed.
 ____________________________________________________________
 ____________________________________________________________
-     Invalid task number.
+     The number thou hast named correspondeth to no duty presently held within the register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-No tasks added yet.
+Behold, the full register of thy appointed duties:
+The royal register standeth presently unburdened; no duty hath yet been inscribed.
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -534,39 +534,39 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [D][ ] return book (by: Jun 06 2019 6:00 PM)
-     Now you have 2 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [D][ ] return book (appointed for: Jun 06 2019 6:00 PM)
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
-     Now you have 3 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [E][ ] project meeting (commencing: Aug 06 2019 2:00 PM; concluding: Aug 06 2019 4:00 PM)
+     There now stand 3 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
-       [D][X] return book (by: Jun 06 2019 6:00 PM)
+     Most excellent. I have proclaimed this duty duly accomplished:
+       [D][X] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     OK, I've marked this task as not done yet:
-       [D][ ] return book (by: Jun 06 2019 6:00 PM)
+     As thou commandest. I have restored this duty to the ranks of unfinished business:
+       [D][ ] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     Noted. I've removed this task:
+     It is done. I have struck this duty from the royal register:
        [T][ ] read book
-     Now you have 2 tasks in the list.
+     There now remain 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 D | 0 | return book | 2019-06-06T18:00 | -
 E | 0 | project meeting | 2019-08-06T14:00 | 2019-08-06T16:00 | -
@@ -599,17 +599,17 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
+Behold, the full register of thy appointed duties:
      1.[T][X] read book
-     2.[D][ ] return book (by: Jun 06 2019 6:00 PM)
-     3.[E][X] project meeting (from: Aug 06 2019 2:00 PM to: Aug 06 2019 4:00 PM)
+     2.[D][ ] return book (appointed for: Jun 06 2019 6:00 PM)
+     3.[E][X] project meeting (commencing: Aug 06 2019 2:00 PM; concluding: Aug 06 2019 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -640,18 +640,19 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Unable to load tasks from disk. Starting with an empty list.
+     Regrettably, the saved register could not be read.
+     I shall therefore commence with an empty register.
 ____________________________________________________________
 ____________________________________________________________
-Here are the tasks in your list:
-No tasks added yet.
+Behold, the full register of thy appointed duties:
+The royal register standeth presently unburdened; no duty hath yet been inscribed.
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -687,39 +688,39 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
-       [D][ ] return book (by: Jun 06 2019 6:00 PM)
-     Now you have 2 tasks in the list.
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [D][ ] return book (appointed for: Jun 06 2019 6:00 PM)
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] buy groceries
-     Now you have 3 tasks in the list.
+     There now stand 3 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
+     Most excellent. I have proclaimed this duty duly accomplished:
        [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
-       [D][X] return book (by: Jun 06 2019 6:00 PM)
+     Most excellent. I have proclaimed this duty duly accomplished:
+       [D][X] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-Here are the matching tasks in your list:
+Behold, the duties answering thy inquiry:
      1.[T][X] read book
-     2.[D][X] return book (by: Jun 06 2019 6:00 PM)
+     2.[D][X] return book (appointed for: Jun 06 2019 6:00 PM)
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
 
@@ -743,7 +744,9 @@ bye
 Remove-Item data/bobby.txt -ErrorAction Ignore; $consoleSources = Get-ChildItem -Recurse -Filter *.java -Path src/main/java | Where-Object { $_.FullName -notmatch '\\bobby\\gui\\' -and $_.Name -ne 'Launcher.java' } | ForEach-Object FullName; javac --release 25 -d out/date-time-verification $consoleSources; "todo read book", "todo buy groceries", "mark 1", "stats", "bye" | java -cp out/date-time-verification bobby.Bobby
 ```
 
-**Comparison rule:** Verify that the actual `Period` dates are the Monday and Sunday containing the local execution date. Then replace that line with the placeholder shown below before applying the standard exact-output comparison.
+**Comparison rule:** Verify that the actual `Period under review` dates are the Monday and Sunday containing the local
+execution date. Then replace that line with the placeholder shown below before applying the standard exact-output
+comparison.
 
 **Expected output:**
 
@@ -755,32 +758,32 @@ BBBB  O   O  BBBB  BBBB    Y
 B   B O   O  B   B B   B   Y
 BBBB   OOO   BBBB  BBBB    Y
 ____________________________________________________________
-     Hello, I'm Bobby.
-     What can I do for you?
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] read book
-     Now you have 1 tasks in the list.
+     One duty now standeth upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Got it. I've added this task:
+     It is done. By thy command, I have inscribed this duty upon the royal register:
        [T][ ] buy groceries
-     Now you have 2 tasks in the list.
+     There now stand 2 duties upon the register.
 ____________________________________________________________
 ____________________________________________________________
-     Nice! I've marked this task as done:
+     Most excellent. I have proclaimed this duty duly accomplished:
        [T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-Here are your task statistics:
-     Period: <CURRENT_WEEK>
-     Currently completed this week: 1
-     Completed overall: 1
-     Pending: 1
-     Total: 2
+Attend now to the formal reckoning of thy duties:
+     Period under review: <CURRENT_WEEK>
+     Accomplished within the present week: 1
+     Accomplished across all recorded time: 1
+     Yet awaiting fulfilment: 1
+     Total duties inscribed: 2
 ____________________________________________________________
 ____________________________________________________________
-     Bye! Hope to see you again soon.
+     I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```

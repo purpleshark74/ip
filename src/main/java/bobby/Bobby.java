@@ -23,6 +23,8 @@ import bobby.ui.Ui;
 public class Bobby {
     private static final DateTimeFormatter STATISTICS_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
+    private static final String FAREWELL_MESSAGE =
+            "     I humbly take my leave. May good fortune attend thee until next we meet.";
 
     private final TaskList tasks;
     private final boolean hasLoadingError;
@@ -150,7 +152,7 @@ public class Bobby {
      */
     public CommandResult getCommandResult(String input) {
         if (isExitCommand(input)) {
-            return new CommandResult("     Bye! Hope to see you again soon.", false);
+            return new CommandResult(FAREWELL_MESSAGE, false);
         }
 
         try {
@@ -181,13 +183,15 @@ public class Bobby {
     private String execute(Parser.Command command) throws BobbyException {
         switch (command.getType()) {
             case LIST:
-                return formatTasks("Here are the tasks in your list:",
-                        "No tasks added yet.", tasks.asList());
+                return formatTasks("Behold, the full register of thy appointed duties:",
+                        "The royal register standeth presently unburdened; no duty hath yet been inscribed.",
+                        tasks.asList());
             case STATS:
                 return formatStatistics();
             case FIND:
-                return formatTasks("Here are the matching tasks in your list:",
-                        "No matching tasks found.", tasks.findTasksContaining(command.getKeyword()));
+                return formatTasks("Behold, the duties answering thy inquiry:",
+                        "Alas, no duty within the register answereth thy inquiry.",
+                        tasks.findTasksContaining(command.getKeyword()));
             case ADD:
                 return addTask(command.getTask());
             case MARK:
@@ -211,9 +215,9 @@ public class Bobby {
     private String addTask(Task task) throws BobbyException {
         tasks.add(task);
         saveTasks();
-        return "     Got it. I've added this task:\n"
+        return "     It is done. By thy command, I have inscribed this duty upon the royal register:\n"
                 + "       " + task + "\n"
-                + "     Now you have " + tasks.size() + " tasks in the list.";
+                + "     " + formatAddedTaskCount(tasks.size());
     }
 
     /**
@@ -233,8 +237,8 @@ public class Bobby {
         saveTasks();
 
         String message = isDone
-                ? "     Nice! I've marked this task as done:"
-                : "     OK, I've marked this task as not done yet:";
+                ? "     Most excellent. I have proclaimed this duty duly accomplished:"
+                : "     As thou commandest. I have restored this duty to the ranks of unfinished business:";
         return message + "\n       " + tasks.get(index);
     }
 
@@ -248,9 +252,9 @@ public class Bobby {
     private String deleteTask(int index) throws BobbyException {
         Task removedTask = tasks.remove(index);
         saveTasks();
-        return "     Noted. I've removed this task:\n"
+        return "     It is done. I have struck this duty from the royal register:\n"
                 + "       " + removedTask + "\n"
-                + "     Now you have " + tasks.size() + " tasks in the list.";
+                + "     " + formatRemainingTaskCount(tasks.size());
     }
 
     /**
@@ -262,8 +266,36 @@ public class Bobby {
         try {
             Storage.save(tasks.asList());
         } catch (IOException e) {
-            throw new BobbyException("Unable to save tasks to disk.");
+            throw new BobbyException(
+                    "Grievous tidings: I was unable to commit thy duties unto the permanent archive.");
         }
+    }
+
+    /**
+     * Formats the register size after a task is added.
+     *
+     * @param taskCount the number of tasks in the register.
+     * @return a grammatically correct task-count sentence.
+     */
+    private static String formatAddedTaskCount(int taskCount) {
+        return taskCount == 1
+                ? "One duty now standeth upon the register."
+                : "There now stand " + taskCount + " duties upon the register.";
+    }
+
+    /**
+     * Formats the register size after a task is removed.
+     *
+     * @param taskCount the number of tasks remaining in the register.
+     * @return a grammatically correct task-count sentence.
+     */
+    private static String formatRemainingTaskCount(int taskCount) {
+        if (taskCount == 0) {
+            return "The register now standeth empty.";
+        }
+        return taskCount == 1
+                ? "One duty now remaineth upon the register."
+                : "There now remain " + taskCount + " duties upon the register.";
     }
 
     /**
@@ -305,12 +337,12 @@ public class Bobby {
         long completedOverall = tasks.countCompletedTasks();
         long pending = tasks.size() - completedOverall;
 
-        return "Here are your task statistics:\n"
-                + "     Period: " + weekStartDate.format(STATISTICS_DATE_FORMAT)
+        return "Attend now to the formal reckoning of thy duties:\n"
+                + "     Period under review: " + weekStartDate.format(STATISTICS_DATE_FORMAT)
                 + " to " + weekEndDate.format(STATISTICS_DATE_FORMAT) + "\n"
-                + "     Currently completed this week: " + completedThisWeek + "\n"
-                + "     Completed overall: " + completedOverall + "\n"
-                + "     Pending: " + pending + "\n"
-                + "     Total: " + tasks.size();
+                + "     Accomplished within the present week: " + completedThisWeek + "\n"
+                + "     Accomplished across all recorded time: " + completedOverall + "\n"
+                + "     Yet awaiting fulfilment: " + pending + "\n"
+                + "     Total duties inscribed: " + tasks.size();
     }
 }

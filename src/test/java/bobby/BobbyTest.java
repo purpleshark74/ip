@@ -34,7 +34,7 @@ class BobbyTest {
 
         String response = bobby.getResponse("list");
 
-        assertEquals("Here are the tasks in your list:\n"
+        assertEquals("Behold, the full register of thy appointed duties:\n"
                 + "     1.[T][ ] read book\n"
                 + "     2.[T][ ] write essay", response);
     }
@@ -50,7 +50,7 @@ class BobbyTest {
 
         String response = bobby.getResponse("find book");
 
-        assertEquals("Here are the matching tasks in your list:\n"
+        assertEquals("Behold, the duties answering thy inquiry:\n"
                 + "     1.[T][ ] Read book", response);
     }
 
@@ -72,12 +72,12 @@ class BobbyTest {
 
         String response = bobby.getResponse("stats");
 
-        assertEquals("Here are your task statistics:\n"
-                + "     Period: Sep 07 2026 to Sep 13 2026\n"
-                + "     Currently completed this week: 1\n"
-                + "     Completed overall: 3\n"
-                + "     Pending: 1\n"
-                + "     Total: 4", response);
+        assertEquals("Attend now to the formal reckoning of thy duties:\n"
+                + "     Period under review: Sep 07 2026 to Sep 13 2026\n"
+                + "     Accomplished within the present week: 1\n"
+                + "     Accomplished across all recorded time: 3\n"
+                + "     Yet awaiting fulfilment: 1\n"
+                + "     Total duties inscribed: 4", response);
     }
 
     /**
@@ -89,12 +89,12 @@ class BobbyTest {
 
         String response = bobby.getResponse("stats");
 
-        assertEquals("Here are your task statistics:\n"
-                + "     Period: Sep 07 2026 to Sep 13 2026\n"
-                + "     Currently completed this week: 0\n"
-                + "     Completed overall: 0\n"
-                + "     Pending: 0\n"
-                + "     Total: 0", response);
+        assertEquals("Attend now to the formal reckoning of thy duties:\n"
+                + "     Period under review: Sep 07 2026 to Sep 13 2026\n"
+                + "     Accomplished within the present week: 0\n"
+                + "     Accomplished across all recorded time: 0\n"
+                + "     Yet awaiting fulfilment: 0\n"
+                + "     Total duties inscribed: 0", response);
     }
 
     /**
@@ -106,7 +106,8 @@ class BobbyTest {
 
         String response = bobby.getResponse("unknown");
 
-        assertEquals("     I don't understand what you said. Please use the correct commands", response);
+        assertEquals("     Prithee, forgive this humble steward, for thy decree exceedeth my understanding. "
+                + "I beseech thee, employ one of the appointed commands.", response);
     }
 
     /**
@@ -121,7 +122,8 @@ class BobbyTest {
 
         assertTrue(invalidResult.isError());
         assertFalse(validResult.isError());
-        assertEquals("     I don't understand what you said. Please use the correct commands",
+        assertEquals("     Prithee, forgive this humble steward, for thy decree exceedeth my understanding. "
+                        + "I beseech thee, employ one of the appointed commands.",
                 invalidResult.getMessage());
     }
 
@@ -134,7 +136,7 @@ class BobbyTest {
 
         String response = bobby.getResponse("bye");
 
-        assertEquals("     Bye! Hope to see you again soon.", response);
+        assertEquals("     I humbly take my leave. May good fortune attend thee until next we meet.", response);
     }
 
     /**

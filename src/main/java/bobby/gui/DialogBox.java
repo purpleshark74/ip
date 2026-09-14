@@ -78,7 +78,7 @@ public class DialogBox extends HBox {
         dialogBox.dialog.getStyleClass().add(isError ? "error-message" : "bobby-message");
         if (isError) {
             dialogBox.getStyleClass().add("error-row");
-            dialogBox.speakerLabel.setText("BOBBY  ·  COMMAND ERROR");
+            dialogBox.speakerLabel.setText("LORD BOBBY  ·  IMPROPER DECREE");
         }
         return dialogBox;
     }

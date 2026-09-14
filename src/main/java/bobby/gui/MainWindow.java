@@ -19,7 +19,7 @@ import javafx.scene.layout.VBox;
  * Controls Bobby's main chat window.
  */
 public class MainWindow extends AnchorPane {
-    private final Image bobbyImage = loadImage("/images/Bobby_Head.png");
+    private final Image bobbyImage = loadImage("/images/Lord_Bobby_Portrait.png");
 
     @FXML
     private ScrollPane scrollPane;
@@ -46,7 +46,8 @@ public class MainWindow extends AnchorPane {
                 userInput.getText().isBlank(), userInput.textProperty()));
         dialogContainer.getChildren().add(
                 DialogBox.getBobbyDialog(
-                        "Hi, I'm Bobby. Tell me what you need to remember, or type list to see your tasks.",
+                        "Well met, most honoured patron. Speak thy charge, or enter list that I may present "
+                                + "the royal register.",
                         bobbyImage, false));
         Platform.runLater(userInput::requestFocus);
     }

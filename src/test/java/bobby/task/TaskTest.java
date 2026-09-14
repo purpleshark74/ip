@@ -122,7 +122,7 @@ class TaskTest {
         LocalDateTime deadlineDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
         Deadline deadline = new Deadline("return book", deadlineDateTime);
 
-        assertEquals("[D][ ] return book (by: Sep 01 2026 2:00 PM)", deadline.toString());
+        assertEquals("[D][ ] return book (appointed for: Sep 01 2026 2:00 PM)", deadline.toString());
     }
 
     /**
@@ -134,7 +134,7 @@ class TaskTest {
         LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 1, 16, 0);
         Event event = new Event("meeting", startDateTime, endDateTime);
 
-        assertEquals("[E][ ] meeting (from: Sep 01 2026 2:00 PM to: Sep 01 2026 4:00 PM)",
+        assertEquals("[E][ ] meeting (commencing: Sep 01 2026 2:00 PM; concluding: Sep 01 2026 4:00 PM)",
                 event.toString());
     }
 

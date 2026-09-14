@@ -27,8 +27,8 @@
                     <children>
                         <VBox alignment="CENTER_LEFT">
                             <children>
-                                <Label styleClass="app-title" text="Bobby" />
-                                <Label styleClass="app-subtitle" text="YOUR TASK ASSISTANT" />
+                                <Label styleClass="app-title" text="LORD BOBBY" />
+                                <Label styleClass="app-subtitle" text="ROYAL STEWARD OF THE REGISTER" />
                             </children>
                         </VBox>
                     </children>
@@ -48,7 +48,7 @@
                     <children>
                         <TextField fx:id="userInput"
                                    onAction="#handleUserInput"
-                                   promptText="Type a command…"
+                                   promptText="Enter thy command…"
                                    styleClass="command-input"
                                    HBox.hgrow="ALWAYS" />
                         <Button fx:id="sendButton"
@@ -56,7 +56,7 @@
                                 mnemonicParsing="false"
                                 onAction="#handleUserInput"
                                 styleClass="send-button"
-                                text="Send" />
+                                text="Dispatch" />
                     </children>
                 </HBox>
             </children>

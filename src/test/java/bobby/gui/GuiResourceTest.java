@@ -37,6 +37,6 @@ class GuiResourceTest {
      */
     @Test
     void bobbyProfileImage_applicationResources_resourceFound() {
-        assertNotNull(MainWindow.class.getResource("/images/Bobby_Head.png"));
+        assertNotNull(MainWindow.class.getResource("/images/Lord_Bobby_Portrait.png"));
     }
 }

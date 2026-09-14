@@ -51,7 +51,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E][" + getStatusIcon() + "] " + description
-                + " (from: " + startDateTime.format(DISPLAY_DATE_FORMAT)
-                + " to: " + endDateTime.format(DISPLAY_DATE_FORMAT) + ")";
+                + " (commencing: " + startDateTime.format(DISPLAY_DATE_FORMAT)
+                + "; concluding: " + endDateTime.format(DISPLAY_DATE_FORMAT) + ")";
     }
 }

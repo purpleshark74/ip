@@ -26,7 +26,11 @@ public final class Parser {
     private static final String STATS_COMMAND = "stats";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String UNKNOWN_COMMAND_MESSAGE =
-            "I don't understand what you said. Please use the correct commands";
+            "Prithee, forgive this humble steward, for thy decree exceedeth my understanding. "
+                    + "I beseech thee, employ one of the appointed commands.";
+    private static final String EVENT_USAGE_MESSAGE =
+            "Thy decree must take precisely this form: "
+                    + "event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.";
     private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
 
@@ -196,7 +200,7 @@ public final class Parser {
      */
     private static Command parseStatsCommand(String command) throws BobbyException {
         if (!command.equalsIgnoreCase(STATS_COMMAND)) {
-            throw new BobbyException("Please use: stats");
+            throw new BobbyException("Thy decree must take precisely this form: stats.");
         }
         return new Command(CommandType.STATS, null, -1, null);
     }
@@ -207,7 +211,8 @@ public final class Parser {
     private static Command parseFindCommand(String command) throws BobbyException {
         String keyword = getCommandArgument(command, FIND_COMMAND);
         if (keyword.isEmpty()) {
-            throw new BobbyException("Please provide a keyword to search for.");
+            throw new BobbyException(
+                    "Pray furnish a word or phrase for which the register may be searched.");
         }
         return new Command(CommandType.FIND, null, -1, keyword);
     }
@@ -227,7 +232,8 @@ public final class Parser {
     private static Command parseTodoCommand(String command) throws BobbyException {
         String description = getCommandArgument(command, ADD_COMMAND);
         if (description.isEmpty()) {
-            throw new BobbyException("You don't have a task after the todo.");
+            throw new BobbyException(
+                    "Thy decree containeth no duty to inscribe. Pray use: todo DESCRIPTION.");
         }
         return new Command(CommandType.ADD, new Todo(description), -1, null);
     }
@@ -241,7 +247,9 @@ public final class Parser {
         boolean hasDescription = parts.length == 2 && !parts[0].trim().isEmpty();
         boolean hasDateTime = parts.length == 2 && !parts[1].trim().isEmpty();
         if (!hasDescription || !hasDateTime) {
-            throw new BobbyException("Please use: deadline DESCRIPTION /by YYYY-MM-DD HHMM");
+            throw new BobbyException(
+                    "Thy decree must take precisely this form: "
+                            + "deadline DESCRIPTION /by YYYY-MM-DD HHMM.");
         }
         return new Command(CommandType.ADD,
                 new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1, null);
@@ -254,7 +262,7 @@ public final class Parser {
         String eventDetails = getCommandArgument(command, EVENT_COMMAND);
         String[] fromParts = eventDetails.split(" /from ", 2);
         if (fromParts.length < 2) {
-            throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
+            throw new BobbyException(EVENT_USAGE_MESSAGE);
         }
 
         String description = fromParts[0].trim();
@@ -264,7 +272,7 @@ public final class Parser {
                 && !toParts[0].trim().isEmpty()
                 && !toParts[1].trim().isEmpty();
         if (!hasDescription || !hasStartAndEnd) {
-            throw new BobbyException("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM");
+            throw new BobbyException(EVENT_USAGE_MESSAGE);
         }
         return new Command(CommandType.ADD, new Event(description,
                 parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1, null);
@@ -284,7 +292,9 @@ public final class Parser {
         try {
             return LocalDateTime.parse(dateTime, INPUT_DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new BobbyException("Please use dates and times in YYYY-MM-DD HHMM format.");
+            throw new BobbyException(
+                    "The appointed date and hour are not in an acceptable form. "
+                            + "Pray employ YYYY-MM-DD HHMM.");
         }
     }
 
@@ -295,11 +305,13 @@ public final class Parser {
         try {
             int index = Integer.parseInt(taskNumber) - 1;
             if (index < 0 || index >= taskCount) {
-                throw new BobbyException("Invalid task number.");
+                throw new BobbyException(
+                        "The number thou hast named correspondeth to no duty presently held within the register.");
             }
             return index;
         } catch (NumberFormatException e) {
-            throw new BobbyException("Invalid task number.");
+            throw new BobbyException(
+                    "The number thou hast named correspondeth to no duty presently held within the register.");
         }
     }
 }

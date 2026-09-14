@@ -35,7 +35,7 @@ public class Main extends Application {
             controller.setBobby(bobby);
 
             stage.setScene(new Scene(mainLayout));
-            stage.setTitle("Bobby");
+            stage.setTitle("Lord Bobby — Royal Steward of Duties");
             stage.setWidth(WINDOW_WIDTH);
             stage.setHeight(WINDOW_HEIGHT);
             stage.setMinWidth(MINIMUM_WINDOW_WIDTH);

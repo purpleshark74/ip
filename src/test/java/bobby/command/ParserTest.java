@@ -64,7 +64,7 @@ class ParserTest {
         BobbyException exception = assertThrows(BobbyException.class, () ->
                 Parser.parse("stats week", 3));
 
-        assertEquals("Please use: stats", exception.getMessage());
+        assertEquals("Thy decree must take precisely this form: stats.", exception.getMessage());
     }
 
     /**
@@ -154,7 +154,8 @@ class ParserTest {
     void parse_todoWithoutDescription_exceptionThrown() {
         BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse("todo", 0));
 
-        assertEquals("You don't have a task after the todo.", exception.getMessage());
+        assertEquals("Thy decree containeth no duty to inscribe. Pray use: todo DESCRIPTION.",
+                exception.getMessage());
     }
 
     /**
@@ -164,7 +165,8 @@ class ParserTest {
     void parse_findWithoutKeyword_exceptionThrown() {
         BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse("find", 0));
 
-        assertEquals("Please provide a keyword to search for.", exception.getMessage());
+        assertEquals("Pray furnish a word or phrase for which the register may be searched.",
+                exception.getMessage());
     }
 
     /**
@@ -177,9 +179,11 @@ class ParserTest {
         BobbyException missingEventDetailsException = assertThrows(BobbyException.class, () ->
                 Parser.parse("event meeting /from 2026-09-01 1400", 0));
 
-        assertEquals("Please use dates and times in YYYY-MM-DD HHMM format.",
+        assertEquals("The appointed date and hour are not in an acceptable form. "
+                        + "Pray employ YYYY-MM-DD HHMM.",
                 invalidDateException.getMessage());
-        assertEquals("Please use: event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM",
+        assertEquals("Thy decree must take precisely this form: "
+                        + "event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.",
                 missingEventDetailsException.getMessage());
     }
 
@@ -219,7 +223,8 @@ class ParserTest {
     private void assertInvalidTaskNumber(String input, int taskCount) {
         BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse(input, taskCount));
 
-        assertEquals("Invalid task number.", exception.getMessage());
+        assertEquals("The number thou hast named correspondeth to no duty presently held within the register.",
+                exception.getMessage());
     }
 
     /**
@@ -230,7 +235,8 @@ class ParserTest {
     private void assertUnknownCommand(String input) {
         BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse(input, 0));
 
-        assertEquals("I don't understand what you said. Please use the correct commands",
+        assertEquals("Prithee, forgive this humble steward, for thy decree exceedeth my understanding. "
+                        + "I beseech thee, employ one of the appointed commands.",
                 exception.getMessage());
     }
 }
