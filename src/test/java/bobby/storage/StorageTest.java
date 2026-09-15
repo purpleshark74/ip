@@ -104,9 +104,23 @@ class StorageTest {
         assertInvalidTaskRecord("T | 2 | read book");
         assertInvalidTaskRecord("D | 0 | return book");
         assertInvalidTaskRecord("E | 0 | meeting | invalid date | 2026-09-01T16:00");
+        assertInvalidTaskRecord("E | 0 | meeting | 2026-09-01T16:00 | 2026-09-01T16:00");
         assertInvalidTaskRecord("N | 0 | unknown task");
         assertInvalidTaskRecord("T | 1 | read book | invalid date");
         assertInvalidTaskRecord("T | 0 | read book | 2026-09-10T15:42:18");
+        assertInvalidTaskRecord("T | 0 | read book\n\nT | 0 | write essay");
+        assertInvalidTaskRecord("T | 0 | read book\nT | 1 | READ BOOK");
+    }
+
+    /** Saving rejects duplicate data before replacing a valid existing save file. */
+    @Test
+    void save_duplicateTasks_ioExceptionThrownAndExistingFilePreserved() throws IOException {
+        Storage.save(List.of(new Todo("existing task")));
+
+        assertThrows(IOException.class, () ->
+                Storage.save(List.of(new Todo("read book"), new Todo("READ BOOK"))));
+
+        assertEquals("T | 0 | existing task | -", Files.readString(SAVE_FILE).strip());
     }
 
     /**

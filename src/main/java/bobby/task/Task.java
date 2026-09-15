@@ -3,6 +3,8 @@ package bobby.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 import bobby.storage.Storage;
 
@@ -12,6 +14,7 @@ import bobby.storage.Storage;
 public class Task {
     private static final DateTimeFormatter COMPLETION_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     protected String description;
     protected boolean isDone;
@@ -86,6 +89,36 @@ public class Task {
      */
     public boolean hasKnownCompletionDateTime() {
         return completionDateTime != null;
+    }
+
+    /**
+     * Returns the recorded completion date and time, when known.
+     *
+     * @return the completion date and time, or an empty value for pending and legacy completed tasks.
+     */
+    public Optional<LocalDateTime> getCompletionDateTime() {
+        return Optional.ofNullable(completionDateTime);
+    }
+
+    /**
+     * Returns whether this task has the same type and defining details as another task.
+     * Completion state is deliberately excluded because it does not make a task distinct.
+     *
+     * @param other the task to compare with.
+     * @return {@code true} when both tasks represent the same duty.
+     */
+    public boolean hasSameDetailsAs(Task other) {
+        return other != null
+                && getClass().equals(other.getClass())
+                && normalizeDescription(description).equalsIgnoreCase(
+                        normalizeDescription(other.description));
+    }
+
+    /**
+     * Returns a description with inconsequential whitespace differences removed.
+     */
+    private static String normalizeDescription(String description) {
+        return WHITESPACE_PATTERN.matcher(description.strip()).replaceAll(" ");
     }
 
     /**

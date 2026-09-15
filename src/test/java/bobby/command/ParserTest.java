@@ -30,6 +30,7 @@ class ParserTest {
     @Test
     void isByeCommand_nonExitCommand_falseReturned() {
         assertEquals(false, Parser.isByeCommand("bye now"));
+        assertEquals(false, Parser.isByeCommand(null));
     }
 
     /**
@@ -111,7 +112,7 @@ class ParserTest {
     @Test
     void parse_eventCommand_eventTaskReturned() throws BobbyException {
         Parser.Command command = Parser.parse(
-                "EVENT project meeting /from 2026-09-01 1400 /to 2026-09-01 1600", 0);
+                "  EVENT\tproject   meeting  /FROM  2026-09-01  1400  /TO 2026-09-01 1600  ", 0);
 
         assertEquals(Parser.CommandType.ADD, command.getType());
         Event task = assertInstanceOf(Event.class, command.getTask());
@@ -188,6 +189,51 @@ class ParserTest {
     }
 
     /**
+     * Verifies that duplicate date parameters are rejected as malformed commands.
+     */
+    @Test
+    void parse_dateBasedCommandDuplicateParameters_exceptionThrown() {
+        BobbyException deadlineException = assertThrows(BobbyException.class, () ->
+                Parser.parse("deadline report /by 2026-09-01 1200 /by 2026-09-02 1200", 0));
+        BobbyException eventException = assertThrows(BobbyException.class, () ->
+                Parser.parse("event meeting /from 2026-09-01 1200 /to 2026-09-01 1300 "
+                        + "/to 2026-09-01 1400", 0));
+
+        assertEquals("Thy decree must take precisely this form: "
+                        + "deadline DESCRIPTION /by YYYY-MM-DD HHMM.",
+                deadlineException.getMessage());
+        assertEquals("Thy decree must take precisely this form: "
+                        + "event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.",
+                eventException.getMessage());
+    }
+
+    /**
+     * Verifies that an event must end strictly after it starts.
+     */
+    @Test
+    void parse_eventWithInvalidRange_exceptionThrown() {
+        BobbyException sameTimeException = assertThrows(BobbyException.class, () ->
+                Parser.parse("event meeting /from 2026-09-01 1200 /to 2026-09-01 1200", 0));
+        BobbyException reversedTimeException = assertThrows(BobbyException.class, () ->
+                Parser.parse("event meeting /from 2026-09-01 1400 /to 2026-09-01 1200", 0));
+
+        assertEquals("An event must commence before it concludeth.", sameTimeException.getMessage());
+        assertEquals("An event must commence before it concludeth.", reversedTimeException.getMessage());
+    }
+
+    /**
+     * Verifies that descriptions cannot contain the save-file field separator.
+     */
+    @Test
+    void parse_descriptionWithReservedCharacter_exceptionThrown() {
+        BobbyException exception = assertThrows(BobbyException.class, () ->
+                Parser.parse("todo read | write", 0));
+
+        assertEquals("A duty's description must contain readable text and may not contain the character '|'.",
+                exception.getMessage());
+    }
+
+    /**
      * Verifies that unknown commands and command-word prefixes are rejected.
      */
     @Test
@@ -210,8 +256,8 @@ class ParserTest {
      * Verifies that parsing rejects a missing command before attempting to inspect it.
      */
     @Test
-    void parse_nullInput_assertionErrorThrown() {
-        assertThrows(AssertionError.class, () -> Parser.parse(null, 0));
+    void parse_nullInput_exceptionThrown() {
+        assertUnknownCommand(null);
     }
 
     /**

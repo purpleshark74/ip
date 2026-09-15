@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import bobby.exception.BobbyException;
 import bobby.task.Deadline;
@@ -31,8 +32,19 @@ public final class Parser {
     private static final String EVENT_USAGE_MESSAGE =
             "Thy decree must take precisely this form: "
                     + "event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.";
+    private static final String INVALID_DESCRIPTION_MESSAGE =
+            "A duty's description must contain readable text and may not contain the character '|'.";
+    private static final String INVALID_EVENT_RANGE_MESSAGE =
+            "An event must commence before it concludeth.";
     private static final DateTimeFormatter INPUT_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm").withResolverStyle(ResolverStyle.STRICT);
+    private static final Pattern BY_SEPARATOR_PATTERN =
+            Pattern.compile("\\s+/by\\s+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern FROM_SEPARATOR_PATTERN =
+            Pattern.compile("\\s+/from\\s+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TO_SEPARATOR_PATTERN =
+            Pattern.compile("\\s+/to\\s+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     private Parser() {
     }
@@ -136,7 +148,7 @@ public final class Parser {
      * @return {@code true} when the input requests exit
      */
     public static boolean isByeCommand(String input) {
-        return input.trim().equalsIgnoreCase("bye");
+        return input != null && input.strip().equalsIgnoreCase("bye");
     }
 
     /**
@@ -148,9 +160,11 @@ public final class Parser {
      * @throws BobbyException if the command is malformed or has an invalid task number
      */
     public static Command parse(String input, int taskCount) throws BobbyException {
-        assert input != null : "Command input must not be null";
         assert taskCount >= 0 : "Task count must not be negative";
-        String command = input.trim();
+        if (input == null) {
+            throw new BobbyException(UNKNOWN_COMMAND_MESSAGE);
+        }
+        String command = input.strip();
         String commandWord = getCommandWord(command).toLowerCase(Locale.ROOT);
 
         switch (commandWord) {
@@ -181,8 +195,12 @@ public final class Parser {
      * Extracts the first space-delimited word from a command.
      */
     private static String getCommandWord(String command) {
-        int separatorIndex = command.indexOf(' ');
-        return separatorIndex < 0 ? command : command.substring(0, separatorIndex);
+        for (int i = 0; i < command.length(); i++) {
+            if (Character.isWhitespace(command.charAt(i))) {
+                return command.substring(0, i);
+            }
+        }
+        return command;
     }
 
     /**
@@ -209,7 +227,7 @@ public final class Parser {
      * Parses a find command and its required keyword.
      */
     private static Command parseFindCommand(String command) throws BobbyException {
-        String keyword = getCommandArgument(command, FIND_COMMAND);
+        String keyword = normalizeWhitespace(getCommandArgument(command, FIND_COMMAND));
         if (keyword.isEmpty()) {
             throw new BobbyException(
                     "Pray furnish a word or phrase for which the register may be searched.");
@@ -230,11 +248,12 @@ public final class Parser {
      * Parses a to-do command and its required description.
      */
     private static Command parseTodoCommand(String command) throws BobbyException {
-        String description = getCommandArgument(command, ADD_COMMAND);
+        String description = normalizeWhitespace(getCommandArgument(command, ADD_COMMAND));
         if (description.isEmpty()) {
             throw new BobbyException(
                     "Thy decree containeth no duty to inscribe. Pray use: todo DESCRIPTION.");
         }
+        validateDescription(description);
         return new Command(CommandType.ADD, new Todo(description), -1, null);
     }
 
@@ -243,16 +262,18 @@ public final class Parser {
      */
     private static Command parseDeadlineCommand(String command) throws BobbyException {
         String deadlineDetails = getCommandArgument(command, DEADLINE_COMMAND);
-        String[] parts = deadlineDetails.split(" /by ", 2);
-        boolean hasDescription = parts.length == 2 && !parts[0].trim().isEmpty();
-        boolean hasDateTime = parts.length == 2 && !parts[1].trim().isEmpty();
+        String[] parts = BY_SEPARATOR_PATTERN.split(deadlineDetails, -1);
+        boolean hasDescription = parts.length == 2 && !parts[0].isBlank();
+        boolean hasDateTime = parts.length == 2 && !parts[1].isBlank();
         if (!hasDescription || !hasDateTime) {
             throw new BobbyException(
                     "Thy decree must take precisely this form: "
                             + "deadline DESCRIPTION /by YYYY-MM-DD HHMM.");
         }
+        String description = normalizeWhitespace(parts[0]);
+        validateDescription(description);
         return new Command(CommandType.ADD,
-                new Deadline(parts[0].trim(), parseDateTime(parts[1].trim())), -1, null);
+                new Deadline(description, parseDateTime(parts[1])), -1, null);
     }
 
     /**
@@ -260,29 +281,53 @@ public final class Parser {
      */
     private static Command parseEventCommand(String command) throws BobbyException {
         String eventDetails = getCommandArgument(command, EVENT_COMMAND);
-        String[] fromParts = eventDetails.split(" /from ", 2);
-        if (fromParts.length < 2) {
+        String[] fromParts = FROM_SEPARATOR_PATTERN.split(eventDetails, -1);
+        if (fromParts.length != 2 || TO_SEPARATOR_PATTERN.matcher(fromParts[0]).find()) {
             throw new BobbyException(EVENT_USAGE_MESSAGE);
         }
 
-        String description = fromParts[0].trim();
-        String[] toParts = fromParts[1].split(" /to ", 2);
+        String description = normalizeWhitespace(fromParts[0]);
+        String[] toParts = TO_SEPARATOR_PATTERN.split(fromParts[1], -1);
         boolean hasDescription = !description.isEmpty();
         boolean hasStartAndEnd = toParts.length == 2
-                && !toParts[0].trim().isEmpty()
-                && !toParts[1].trim().isEmpty();
+                && !toParts[0].isBlank()
+                && !toParts[1].isBlank();
         if (!hasDescription || !hasStartAndEnd) {
             throw new BobbyException(EVENT_USAGE_MESSAGE);
         }
-        return new Command(CommandType.ADD, new Event(description,
-                parseDateTime(toParts[0].trim()), parseDateTime(toParts[1].trim())), -1, null);
+        validateDescription(description);
+        LocalDateTime startDateTime = parseDateTime(toParts[0]);
+        LocalDateTime endDateTime = parseDateTime(toParts[1]);
+        if (!startDateTime.isBefore(endDateTime)) {
+            throw new BobbyException(INVALID_EVENT_RANGE_MESSAGE);
+        }
+        return new Command(CommandType.ADD,
+                new Event(description, startDateTime, endDateTime), -1, null);
     }
 
     /**
      * Returns the trimmed text following a command word.
      */
     private static String getCommandArgument(String command, String commandWord) {
-        return command.substring(commandWord.length()).trim();
+        return command.substring(commandWord.length()).strip();
+    }
+
+    /**
+     * Collapses user-entered whitespace so equivalent text is stored consistently.
+     */
+    private static String normalizeWhitespace(String text) {
+        return WHITESPACE_PATTERN.matcher(text.strip()).replaceAll(" ");
+    }
+
+    /**
+     * Rejects descriptions that cannot be represented safely in the save-file format.
+     */
+    private static void validateDescription(String description) throws BobbyException {
+        boolean hasInvalidCharacter = description.indexOf('|') >= 0
+                || description.chars().anyMatch(character -> Character.isISOControl(character));
+        if (hasInvalidCharacter) {
+            throw new BobbyException(INVALID_DESCRIPTION_MESSAGE);
+        }
     }
 
     /**
@@ -290,7 +335,7 @@ public final class Parser {
      */
     private static LocalDateTime parseDateTime(String dateTime) throws BobbyException {
         try {
-            return LocalDateTime.parse(dateTime, INPUT_DATE_TIME_FORMAT);
+            return LocalDateTime.parse(normalizeWhitespace(dateTime), INPUT_DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
             throw new BobbyException(
                     "The appointed date and hour are not in an acceptable form. "
@@ -302,6 +347,10 @@ public final class Parser {
      * Converts a one-based task number to a valid zero-based task-list index.
      */
     private static int getTaskIndex(String taskNumber, int taskCount) throws BobbyException {
+        if (!taskNumber.matches("[1-9]\\d*")) {
+            throw new BobbyException(
+                    "The number thou hast named correspondeth to no duty presently held within the register.");
+        }
         try {
             int index = Integer.parseInt(taskNumber) - 1;
             if (index < 0 || index >= taskCount) {

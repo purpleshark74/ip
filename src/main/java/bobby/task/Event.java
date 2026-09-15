@@ -27,8 +27,22 @@ public class Event extends Task {
         super(description);
         assert startDateTime != null : "Event start date and time must not be null";
         assert endDateTime != null : "Event end date and time must not be null";
+        assert startDateTime.isBefore(endDateTime) : "Event start must be before its end";
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+    }
+
+    /**
+     * Returns whether this event has the same description and time range as another task.
+     *
+     * @param other the task to compare with.
+     * @return {@code true} when both tasks represent the same event.
+     */
+    @Override
+    public boolean hasSameDetailsAs(Task other) {
+        return super.hasSameDetailsAs(other)
+                && startDateTime.equals(((Event) other).startDateTime)
+                && endDateTime.equals(((Event) other).endDateTime);
     }
 
     /**

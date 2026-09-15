@@ -787,3 +787,74 @@ ____________________________________________________________
      I humbly take my leave. May good fortune attend thee until next we meet.
 ____________________________________________________________
 ```
+
+## T12 — reject malformed and inconsistent task data
+
+**Aim:** Flexible whitespace is normalized, while duplicate tasks, repeated parameters, impossible dates,
+invalid event ranges, reserved description characters, and malformed task numbers are rejected without
+changing the task list.
+
+**Inputs:**
+
+```text
+   todo    read   book
+todo READ BOOK
+deadline report /by 2026-02-30 1200
+deadline report /by 2026-09-20 1200 /by 2026-09-21 1200
+event meeting /from 2026-09-20 1200 /to 2026-09-20 1200
+todo unsafe | description
+mark +1
+list
+bye
+```
+
+**Command:**
+
+```powershell
+Remove-Item data/bobby.txt -ErrorAction Ignore; $consoleSources = Get-ChildItem -Recurse -Filter *.java -Path src/main/java | Where-Object { $_.FullName -notmatch '\\bobby\\gui\\' -and $_.Name -ne 'Launcher.java' } | ForEach-Object FullName; javac --release 25 -d out/date-time-verification $consoleSources; "   todo    read   book", "todo READ BOOK", "deadline report /by 2026-02-30 1200", "deadline report /by 2026-09-20 1200 /by 2026-09-21 1200", "event meeting /from 2026-09-20 1200 /to 2026-09-20 1200", "todo unsafe | description", "mark +1", "list", "bye" | java -cp out/date-time-verification bobby.Bobby
+```
+
+**Expected output:**
+
+```text
+____________________________________________________________
+BBBB   OOO   BBBB  BBBB  Y   Y
+B   B O   O  B   B B   B  Y Y
+BBBB  O   O  BBBB  BBBB    Y
+B   B O   O  B   B B   B   Y
+BBBB   OOO   BBBB  BBBB    Y
+____________________________________________________________
+     Well met, most honoured patron. I am Lord Bobby, Royal Steward of the Register.
+     What charge wouldst thou have me enter, amend, or proclaim?
+____________________________________________________________
+____________________________________________________________
+     It is done. By thy command, I have inscribed this duty upon the royal register:
+       [T][ ] read book
+     One duty now standeth upon the register.
+____________________________________________________________
+____________________________________________________________
+     That very duty already standeth upon the royal register.
+____________________________________________________________
+____________________________________________________________
+     The appointed date and hour are not in an acceptable form. Pray employ YYYY-MM-DD HHMM.
+____________________________________________________________
+____________________________________________________________
+     Thy decree must take precisely this form: deadline DESCRIPTION /by YYYY-MM-DD HHMM.
+____________________________________________________________
+____________________________________________________________
+     An event must commence before it concludeth.
+____________________________________________________________
+____________________________________________________________
+     A duty's description must contain readable text and may not contain the character '|'.
+____________________________________________________________
+____________________________________________________________
+     The number thou hast named correspondeth to no duty presently held within the register.
+____________________________________________________________
+____________________________________________________________
+Behold, the full register of thy appointed duties:
+     1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+     I humbly take my leave. May good fortune attend thee until next we meet.
+____________________________________________________________
+```
