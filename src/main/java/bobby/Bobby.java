@@ -147,6 +147,15 @@ public class Bobby {
     }
 
     /**
+     * Returns whether the saved task list could not be loaded at startup.
+     *
+     * @return {@code true} when Bobby started with an empty list after a loading failure.
+     */
+    public boolean hasLoadingError() {
+        return hasLoadingError;
+    }
+
+    /**
      * Executes a user command and returns presentation metadata with Bobby's response.
      *
      * @param input the user's raw command.

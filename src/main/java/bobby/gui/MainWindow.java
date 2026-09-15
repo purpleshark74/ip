@@ -19,6 +19,10 @@ import javafx.scene.layout.VBox;
  * Controls Bobby's main chat window.
  */
 public class MainWindow extends AnchorPane {
+    private static final String LOADING_ERROR_MESSAGE =
+            "Regrettably, the saved register could not be read.\n"
+                    + "I shall therefore commence with an empty register.";
+
     private final Image bobbyImage = loadImage("/images/Lord_Bobby_Portrait.png");
 
     @FXML
@@ -58,7 +62,12 @@ public class MainWindow extends AnchorPane {
      * @param bobby the application's Bobby instance.
      */
     public void setBobby(Bobby bobby) {
+        assert bobby != null : "Bobby instance must not be null";
         this.bobby = bobby;
+        if (bobby.hasLoadingError()) {
+            dialogContainer.getChildren().add(
+                    DialogBox.getBobbyDialog(LOADING_ERROR_MESSAGE, bobbyImage, true));
+        }
     }
 
     /**

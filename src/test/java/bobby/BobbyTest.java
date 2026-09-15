@@ -272,6 +272,7 @@ class BobbyTest {
 
         Bobby bobby = new Bobby();
 
+        assertFalse(bobby.hasLoadingError());
         assertEquals("Behold, the full register of thy appointed duties:\n"
                 + "     1.[T][X] read book", bobby.getResponse("list"));
     }
@@ -286,6 +287,7 @@ class BobbyTest {
 
         Bobby bobby = new Bobby();
 
+        assertTrue(bobby.hasLoadingError());
         assertEquals("Behold, the full register of thy appointed duties:\n"
                         + "The royal register standeth presently unburdened; no duty hath yet been inscribed.",
                 bobby.getResponse("list"));
