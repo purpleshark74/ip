@@ -1,8 +1,11 @@
 package bobby.storage;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -52,11 +55,12 @@ public final class Storage {
      * @throws IOException if the save location cannot be created or written
      */
     public static void save(List<Task> tasks) throws IOException {
-        Files.createDirectories(SAVE_FILE.getParent());
-        List<String> taskLines = tasks.stream()
-                .map(Task::toFileString)
-                .toList();
-        Files.write(SAVE_FILE, taskLines);
+        try {
+            List<String> taskLines = getValidatedTaskLines(tasks);
+            writeAtomically(taskLines);
+        } catch (SecurityException e) {
+            throw new IOException("Access to the task data was denied.", e);
+        }
     }
 
     /**
@@ -66,17 +70,101 @@ public final class Storage {
      * @throws IOException if the save file cannot be read or contains an invalid task record
      */
     public static List<Task> load() throws IOException {
+        try {
+            return loadTasks();
+        } catch (SecurityException e) {
+            throw new IOException("Access to the task data was denied.", e);
+        }
+    }
+
+    /**
+     * Loads and validates all task records after file-access errors have been adapted.
+     */
+    private static List<Task> loadTasks() throws IOException {
         if (Files.notExists(SAVE_FILE)) {
             return new ArrayList<>();
         }
 
         List<Task> tasks = new ArrayList<>();
-        for (String line : Files.readAllLines(SAVE_FILE)) {
-            if (!line.isBlank()) {
-                tasks.add(parseTask(line));
+        for (String line : Files.readAllLines(SAVE_FILE, StandardCharsets.UTF_8)) {
+            if (line.isBlank()) {
+                throw new IOException("Blank task record.");
             }
+            Task task = parseTask(line);
+            ensureTaskIsUnique(tasks, task);
+            tasks.add(task);
         }
         return tasks;
+    }
+
+    /**
+     * Converts tasks to records only after confirming that every record can be loaded safely.
+     */
+    private static List<String> getValidatedTaskLines(List<Task> tasks) throws IOException {
+        if (tasks == null) {
+            throw new IOException("Missing task list.");
+        }
+
+        List<String> taskLines = new ArrayList<>();
+        List<Task> validatedTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task == null) {
+                throw new IOException("Task list contains a missing task.");
+            }
+            String taskLine = task.toFileString();
+            if (taskLine.chars().anyMatch(character -> character == '\r' || character == '\n')) {
+                throw new IOException("Task data contains a line break.");
+            }
+            Task validatedTask = parseTask(taskLine);
+            ensureTaskIsUnique(validatedTasks, validatedTask);
+            validatedTasks.add(validatedTask);
+            taskLines.add(taskLine);
+        }
+        return taskLines;
+    }
+
+    /**
+     * Replaces the save file without exposing a partially written task list.
+     */
+    private static void writeAtomically(List<String> taskLines) throws IOException {
+        Path saveDirectory = SAVE_FILE.getParent();
+        Files.createDirectories(saveDirectory);
+        Path temporaryFile = Files.createTempFile(saveDirectory, "bobby-", ".tmp");
+        IOException writeFailure = null;
+        boolean isMoveComplete = false;
+        try {
+            Files.write(temporaryFile, taskLines, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporaryFile, SAVE_FILE, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporaryFile, SAVE_FILE, StandardCopyOption.REPLACE_EXISTING);
+            }
+            isMoveComplete = true;
+        } catch (IOException e) {
+            writeFailure = e;
+            throw e;
+        } finally {
+            if (!isMoveComplete) {
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException cleanupFailure) {
+                    if (writeFailure == null) {
+                        throw cleanupFailure;
+                    }
+                    writeFailure.addSuppressed(cleanupFailure);
+                }
+            }
+        }
+    }
+
+    /**
+     * Rejects a task whose defining details duplicate a task already read.
+     */
+    private static void ensureTaskIsUnique(List<Task> tasks, Task candidate) throws IOException {
+        if (tasks.stream().anyMatch(task -> task.hasSameDetailsAs(candidate))) {
+            throw new IOException("Duplicate task data.");
+        }
     }
 
     /**
@@ -167,9 +255,12 @@ public final class Storage {
         if (!hasStartAndEnd) {
             throw new IOException("Invalid event data.");
         }
-        return new Event(fields[TASK_DESCRIPTION_INDEX],
-                parseDateTime(fields[EVENT_START_DATE_TIME_INDEX]),
-                parseDateTime(fields[EVENT_END_DATE_TIME_INDEX]));
+        LocalDateTime startDateTime = parseDateTime(fields[EVENT_START_DATE_TIME_INDEX]);
+        LocalDateTime endDateTime = parseDateTime(fields[EVENT_END_DATE_TIME_INDEX]);
+        if (!startDateTime.isBefore(endDateTime)) {
+            throw new IOException("Event start must be before its end.");
+        }
+        return new Event(fields[TASK_DESCRIPTION_INDEX], startDateTime, endDateTime);
     }
 
     /**

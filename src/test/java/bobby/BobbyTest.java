@@ -128,6 +128,21 @@ class BobbyTest {
     }
 
     /**
+     * Verifies that an equivalent task cannot be added twice.
+     */
+    @Test
+    void getCommandResult_duplicateTask_errorReturnedAndTaskListUnchanged() {
+        TaskList taskList = new TaskList(List.of(new Todo("Read book")));
+        Bobby bobby = new Bobby(taskList);
+
+        CommandResult result = bobby.getCommandResult("todo read book");
+
+        assertTrue(result.isError());
+        assertEquals("     That very duty already standeth upon the royal register.", result.getMessage());
+        assertEquals(1, taskList.size());
+    }
+
+    /**
      * Verifies that the exit command receives Bobby's farewell response.
      */
     @Test

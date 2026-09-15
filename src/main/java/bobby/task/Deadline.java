@@ -28,6 +28,18 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns whether this deadline has the same description and appointed time as another task.
+     *
+     * @param other the task to compare with.
+     * @return {@code true} when both tasks represent the same deadline.
+     */
+    @Override
+    public boolean hasSameDetailsAs(Task other) {
+        return super.hasSameDetailsAs(other)
+                && deadlineDateTime.equals(((Deadline) other).deadlineDateTime);
+    }
+
+    /**
      * Returns this deadline in the on-disk format used by {@link Storage}.
      *
      * @return a line that represents this deadline in the save file

@@ -7,8 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import bobby.command.Parser;
 import bobby.exception.BobbyException;
@@ -213,8 +215,15 @@ public class Bobby {
      * @throws BobbyException if the task list cannot be saved.
      */
     private String addTask(Task task) throws BobbyException {
+        if (tasks.hasTaskWithSameDetails(task)) {
+            throw new BobbyException(
+                    "That very duty already standeth upon the royal register.");
+        }
+
+        List<Task> updatedTasks = new ArrayList<>(tasks.asList());
+        updatedTasks.add(task);
+        saveTasks(updatedTasks);
         tasks.add(task);
-        saveTasks();
         return "     It is done. By thy command, I have inscribed this duty upon the royal register:\n"
                 + "       " + task + "\n"
                 + "     " + formatAddedTaskCount(tasks.size());
@@ -229,12 +238,22 @@ public class Bobby {
      * @throws BobbyException if the task list cannot be saved.
      */
     private String markTask(int index, boolean isDone) throws BobbyException {
-        if (isDone) {
-            tasks.markAsDone(index, LocalDateTime.now(clock));
-        } else {
-            tasks.markAsNotDone(index);
+        Task task = tasks.get(index);
+        boolean isStatusChanged = task.isDone() != isDone;
+        if (isStatusChanged) {
+            Optional<LocalDateTime> previousCompletionDateTime = task.getCompletionDateTime();
+            if (isDone) {
+                tasks.markAsDone(index, LocalDateTime.now(clock));
+            } else {
+                tasks.markAsNotDone(index);
+            }
+            try {
+                saveTasks(tasks.asList());
+            } catch (BobbyException e) {
+                restoreTaskStatus(task, !isDone, previousCompletionDateTime);
+                throw e;
+            }
         }
-        saveTasks();
 
         String message = isDone
                 ? "     Most excellent. I have proclaimed this duty duly accomplished:"
@@ -250,11 +269,32 @@ public class Bobby {
      * @throws BobbyException if the task list cannot be saved.
      */
     private String deleteTask(int index) throws BobbyException {
-        Task removedTask = tasks.remove(index);
-        saveTasks();
+        Task removedTask = tasks.get(index);
+        List<Task> updatedTasks = new ArrayList<>(tasks.asList());
+        updatedTasks.remove(index);
+        saveTasks(updatedTasks);
+        tasks.remove(index);
         return "     It is done. I have struck this duty from the royal register:\n"
                 + "       " + removedTask + "\n"
                 + "     " + formatRemainingTaskCount(tasks.size());
+    }
+
+    /**
+     * Restores a task after its changed completion state could not be saved.
+     *
+     * @param task the task whose state must be restored.
+     * @param wasDone whether the task was completed before the failed change.
+     * @param completionDateTime the previous completion time, when known.
+     */
+    private static void restoreTaskStatus(Task task, boolean wasDone,
+            Optional<LocalDateTime> completionDateTime) {
+        if (!wasDone) {
+            task.markAsNotDone();
+        } else if (completionDateTime.isPresent()) {
+            task.markAsDone(completionDateTime.get());
+        } else {
+            task.markAsDone();
+        }
     }
 
     /**
@@ -262,9 +302,9 @@ public class Bobby {
      *
      * @throws BobbyException if the task list cannot be saved.
      */
-    private void saveTasks() throws BobbyException {
+    private void saveTasks(List<Task> tasksToSave) throws BobbyException {
         try {
-            Storage.save(tasks.asList());
+            Storage.save(tasksToSave);
         } catch (IOException e) {
             throw new BobbyException(
                     "Grievous tidings: I was unable to commit thy duties unto the permanent archive.");

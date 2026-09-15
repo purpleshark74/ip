@@ -149,4 +149,17 @@ class TaskTest {
         assertThrows(AssertionError.class, () -> new Event("meeting", null, validDateTime));
         assertThrows(AssertionError.class, () -> new Event("meeting", validDateTime, null));
     }
+
+    /**
+     * Verifies that an event constructor enforces a strictly increasing time range.
+     */
+    @Test
+    void event_invalidTimeRange_assertionErrorThrown() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+
+        assertThrows(AssertionError.class, () ->
+                new Event("meeting", startDateTime, startDateTime));
+        assertThrows(AssertionError.class, () ->
+                new Event("meeting", startDateTime, startDateTime.minusMinutes(1)));
+    }
 }

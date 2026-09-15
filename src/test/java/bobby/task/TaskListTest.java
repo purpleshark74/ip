@@ -91,6 +91,21 @@ class TaskListTest {
     }
 
     /**
+     * Verifies that duplicate detection ignores description case but includes task type and date details.
+     */
+    @Test
+    void hasTaskWithSameDetails_variedTasks_expectedDuplicateDecisionsReturned() {
+        TaskList taskList = new TaskList(List.of(
+                new Todo("Read book"),
+                new Deadline("submit report", LocalDateTime.of(2026, 9, 20, 12, 0))));
+
+        assertEquals(true, taskList.hasTaskWithSameDetails(new Todo("read book")));
+        assertEquals(false, taskList.hasTaskWithSameDetails(new Deadline(
+                "submit report", LocalDateTime.of(2026, 9, 21, 12, 0))));
+        assertEquals(false, taskList.hasTaskWithSameDetails(new Todo("submit report")));
+    }
+
+    /**
      * Verifies that completion counts use current state and a half-open date-time interval.
      */
     @Test

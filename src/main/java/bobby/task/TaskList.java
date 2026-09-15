@@ -123,6 +123,17 @@ public class TaskList {
     }
 
     /**
+     * Returns whether this list already contains a task with the same defining details.
+     *
+     * @param candidate the task to compare against the stored tasks.
+     * @return {@code true} when an equivalent task is already stored.
+     */
+    public boolean hasTaskWithSameDetails(Task candidate) {
+        assert candidate != null : "Candidate task must not be null";
+        return tasks.stream().anyMatch(task -> task.hasSameDetailsAs(candidate));
+    }
+
+    /**
      * Returns tasks whose descriptions contain the given keyword, ignoring letter case.
      *
      * @param keyword the keyword to search for
