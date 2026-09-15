@@ -43,6 +43,7 @@ class ParserTest {
         assertEquals(Parser.CommandType.LIST, command.getType());
         assertNull(command.getTask());
         assertEquals(-1, command.getTaskIndex());
+        assertNull(command.getKeyword());
     }
 
     /**
@@ -73,10 +74,10 @@ class ParserTest {
      */
     @Test
     void parse_findCommand_findCommandWithKeywordReturned() throws BobbyException {
-        Parser.Command command = Parser.parse(" FIND   book  ", 3);
+        Parser.Command command = Parser.parse(" FIND   project\t  meeting  ", 3);
 
         assertEquals(Parser.CommandType.FIND, command.getType());
-        assertEquals("book", command.getKeyword());
+        assertEquals("project meeting", command.getKeyword());
         assertNull(command.getTask());
         assertEquals(-1, command.getTaskIndex());
     }
@@ -146,6 +147,11 @@ class ParserTest {
         assertInvalidTaskNumber("unmark zero", 1);
         assertInvalidTaskNumber("delete 0", 1);
         assertInvalidTaskNumber("mark 2", 1);
+        assertInvalidTaskNumber("mark -1", 1);
+        assertInvalidTaskNumber("mark +1", 1);
+        assertInvalidTaskNumber("mark 01", 1);
+        assertInvalidTaskNumber("mark 1 2", 2);
+        assertInvalidTaskNumber("mark 999999999999999999999999", 1);
     }
 
     /**
@@ -189,6 +195,41 @@ class ParserTest {
     }
 
     /**
+     * Verifies that deadline commands reject missing fields and misplaced separators.
+     */
+    @Test
+    void parse_deadlineCommandMalformedStructure_exceptionThrown() {
+        assertInvalidDeadlineCommand("deadline");
+        assertInvalidDeadlineCommand("deadline report /by");
+        assertInvalidDeadlineCommand("deadline /by 2026-09-01 1200");
+        assertInvalidDeadlineCommand("deadline report /by 2026-09-01 1200 /by 2026-09-02 1200");
+    }
+
+    /**
+     * Verifies that event commands reject missing fields and misplaced or repeated separators.
+     */
+    @Test
+    void parse_eventCommandMalformedStructure_exceptionThrown() {
+        assertInvalidEventCommand("event");
+        assertInvalidEventCommand("event /from 2026-09-01 1200 /to 2026-09-01 1300");
+        assertInvalidEventCommand("event meeting /from /to 2026-09-01 1300");
+        assertInvalidEventCommand("event meeting /from 2026-09-01 1200 /to");
+        assertInvalidEventCommand("event meeting /to 2026-09-01 1300 /from 2026-09-01 1200");
+        assertInvalidEventCommand("event meeting /from 2026-09-01 1200 "
+                + "/from 2026-09-01 1230 /to 2026-09-01 1300");
+    }
+
+    /**
+     * Verifies that both event date fields use strict calendar and time validation.
+     */
+    @Test
+    void parse_eventCommandInvalidDateTimes_exceptionThrown() {
+        assertInvalidDateTime("event meeting /from 2026-02-30 1200 /to 2026-09-01 1300");
+        assertInvalidDateTime("event meeting /from 2026-09-01 1200 /to 2026-09-01 2400");
+        assertInvalidDateTime("deadline report /by 2026-09-01 12:00");
+    }
+
+    /**
      * Verifies that duplicate date parameters are rejected as malformed commands.
      */
     @Test
@@ -228,6 +269,18 @@ class ParserTest {
     void parse_descriptionWithReservedCharacter_exceptionThrown() {
         BobbyException exception = assertThrows(BobbyException.class, () ->
                 Parser.parse("todo read | write", 0));
+
+        assertEquals("A duty's description must contain readable text and may not contain the character '|'.",
+                exception.getMessage());
+    }
+
+    /**
+     * Verifies that descriptions reject control characters that whitespace normalization does not remove.
+     */
+    @Test
+    void parse_descriptionWithControlCharacter_exceptionThrown() {
+        BobbyException exception = assertThrows(BobbyException.class, () ->
+                Parser.parse("todo read\u0000book", 0));
 
         assertEquals("A duty's description must contain readable text and may not contain the character '|'.",
                 exception.getMessage());
@@ -284,5 +337,42 @@ class ParserTest {
         assertEquals("Prithee, forgive this humble steward, for thy decree exceedeth my understanding. "
                         + "I beseech thee, employ one of the appointed commands.",
                 exception.getMessage());
+    }
+
+    /**
+     * Verifies that a malformed deadline reports the standard deadline usage message.
+     *
+     * @param input the malformed deadline command
+     */
+    private void assertInvalidDeadlineCommand(String input) {
+        BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse(input, 0));
+
+        assertEquals("Thy decree must take precisely this form: "
+                + "deadline DESCRIPTION /by YYYY-MM-DD HHMM.", exception.getMessage());
+    }
+
+    /**
+     * Verifies that a malformed event reports the standard event usage message.
+     *
+     * @param input the malformed event command
+     */
+    private void assertInvalidEventCommand(String input) {
+        BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse(input, 0));
+
+        assertEquals("Thy decree must take precisely this form: "
+                + "event DESCRIPTION /from YYYY-MM-DD HHMM /to YYYY-MM-DD HHMM.",
+                exception.getMessage());
+    }
+
+    /**
+     * Verifies that a malformed date reports the standard date-time message.
+     *
+     * @param input the command containing a malformed date or time
+     */
+    private void assertInvalidDateTime(String input) {
+        BobbyException exception = assertThrows(BobbyException.class, () -> Parser.parse(input, 0));
+
+        assertEquals("The appointed date and hour are not in an acceptable form. "
+                + "Pray employ YYYY-MM-DD HHMM.", exception.getMessage());
     }
 }
