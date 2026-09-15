@@ -1,7 +1,9 @@
 package bobby.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 
@@ -85,12 +87,125 @@ class TaskTest {
         Task task = new Task("read book");
 
         assertEquals(" ", task.getStatusIcon());
+        assertFalse(task.isDone());
 
         task.markAsDone();
         assertEquals("X", task.getStatusIcon());
+        assertTrue(task.isDone());
 
         task.markAsNotDone();
         assertEquals(" ", task.getStatusIcon());
+        assertFalse(task.isDone());
+    }
+
+    /**
+     * Verifies that marking an already completed task does not replace its original completion time.
+     */
+    @Test
+    void markAsDone_alreadyCompletedTask_originalCompletionDateTimePreserved() {
+        Task task = new Task("read book");
+        LocalDateTime originalCompletion = LocalDateTime.of(2026, 9, 8, 10, 15, 30);
+
+        task.markAsDone(originalCompletion);
+        task.markAsDone(LocalDateTime.of(2026, 9, 9, 11, 20, 45));
+        task.markAsDone();
+
+        assertEquals(originalCompletion, task.getCompletionDateTime().orElseThrow());
+    }
+
+    /**
+     * Verifies that the timestamped completion method rejects a missing date and time.
+     */
+    @Test
+    void markAsDone_nullCompletionDateTime_assertionErrorThrown() {
+        Task task = new Task("read book");
+
+        assertThrows(AssertionError.class, () -> task.markAsDone(null));
+    }
+
+    /**
+     * Verifies that task-detail comparison ignores case and repeated whitespace but respects task type.
+     */
+    @Test
+    void hasSameDetailsAs_variedTasks_expectedComparisonReturned() {
+        Task task = new Todo("  Read   book ");
+
+        assertTrue(task.hasSameDetailsAs(new Todo("read book")));
+        assertFalse(task.hasSameDetailsAs(new Task("read book")));
+        assertFalse(task.hasSameDetailsAs(new Todo("write essay")));
+        assertFalse(task.hasSameDetailsAs(null));
+    }
+
+    /**
+     * Verifies that deadlines are equal only when their normalized descriptions and dates match.
+     */
+    @Test
+    void deadlineHasSameDetailsAs_variedDeadlines_expectedComparisonReturned() {
+        LocalDateTime deadlineDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        Deadline deadline = new Deadline("Return book", deadlineDateTime);
+
+        assertTrue(deadline.hasSameDetailsAs(new Deadline("return book", deadlineDateTime)));
+        assertFalse(deadline.hasSameDetailsAs(new Deadline(
+                "return book", deadlineDateTime.plusMinutes(1))));
+        assertFalse(deadline.hasSameDetailsAs(new Todo("return book")));
+    }
+
+    /**
+     * Verifies that events are equal only when their normalized descriptions and full ranges match.
+     */
+    @Test
+    void eventHasSameDetailsAs_variedEvents_expectedComparisonReturned() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 1, 14, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 1, 16, 0);
+        Event event = new Event("Project meeting", startDateTime, endDateTime);
+
+        assertTrue(event.hasSameDetailsAs(new Event(
+                "project meeting", startDateTime, endDateTime)));
+        assertFalse(event.hasSameDetailsAs(new Event(
+                "project meeting", startDateTime.plusMinutes(1), endDateTime)));
+        assertFalse(event.hasSameDetailsAs(new Event(
+                "project meeting", startDateTime, endDateTime.plusMinutes(1))));
+        assertFalse(event.hasSameDetailsAs(new Todo("project meeting")));
+    }
+
+    /**
+     * Verifies that completion-range checks use an inclusive start and exclusive end.
+     */
+    @Test
+    void wasCompletedBetween_boundaryAndIncompleteTasks_expectedResultsReturned() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 7, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 14, 0, 0);
+        Task task = new Task("read book");
+
+        assertFalse(task.wasCompletedBetween(startDateTime, endDateTime));
+
+        task.markAsDone(startDateTime);
+        assertTrue(task.wasCompletedBetween(startDateTime, endDateTime));
+
+        task.markAsNotDone();
+        task.markAsDone(endDateTime);
+        assertFalse(task.wasCompletedBetween(startDateTime, endDateTime));
+
+        task.markAsNotDone();
+        task.markAsDone();
+        assertFalse(task.wasCompletedBetween(startDateTime, endDateTime));
+    }
+
+    /**
+     * Verifies that completion-range checks reject missing or non-increasing interval bounds.
+     */
+    @Test
+    void wasCompletedBetween_invalidInterval_assertionErrorThrown() {
+        Task task = new Task("read book");
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 7, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 14, 0, 0);
+
+        assertThrows(AssertionError.class, () -> task.wasCompletedBetween(null, endDateTime));
+        assertThrows(AssertionError.class, () -> task.wasCompletedBetween(startDateTime, null));
+        assertThrows(AssertionError.class, () ->
+                task.wasCompletedBetween(startDateTime, startDateTime));
+        assertThrows(AssertionError.class, () ->
+                task.wasCompletedBetween(endDateTime, startDateTime));
     }
 
     /**
@@ -123,6 +238,7 @@ class TaskTest {
         Deadline deadline = new Deadline("return book", deadlineDateTime);
 
         assertEquals("[D][ ] return book (appointed for: Sep 01 2026 2:00 PM)", deadline.toString());
+        assertEquals("D | 0 | return book | 2026-09-01T14:00 | -", deadline.toFileString());
     }
 
     /**
@@ -136,6 +252,8 @@ class TaskTest {
 
         assertEquals("[E][ ] meeting (commencing: Sep 01 2026 2:00 PM; concluding: Sep 01 2026 4:00 PM)",
                 event.toString());
+        assertEquals("E | 0 | meeting | 2026-09-01T14:00 | 2026-09-01T16:00 | -",
+                event.toFileString());
     }
 
     /**
