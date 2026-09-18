@@ -68,7 +68,7 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'bobby.jar'
+    archiveFileName = 'lordBobby.jar'
 }
 
 run {

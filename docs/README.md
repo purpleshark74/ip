@@ -9,11 +9,11 @@ Lord Bobby is a desktop chatbot that keeps track of your to-dos, deadlines, and 
 ## Quick start
 
 1. Ensure that [Java 25](https://www.oracle.com/java/technologies/downloads/#java25) is installed.
-1. Place the supplied `bobby.jar` file in the folder where you want Bobby to keep its data.
+1. Place the supplied `lordBobby.jar` file in the folder where you want Bobby to keep its data.
 1. Open a terminal in that folder and run:
 
    ```shell
-   java -jar bobby.jar
+   java -jar lordBobby.jar
    ```
 
 1. Enter a command in the box at the bottom of the window. Try `todo read a book`, followed by `list`.
